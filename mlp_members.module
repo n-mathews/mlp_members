@@ -28,6 +28,26 @@ function mlp_members_theme(): array {
     'mlp_member_access_denied' => [
       'variables' => [],
     ],
+    'mlp_announcements' => [
+      'variables' => [
+        'items'       => [],
+        'categories'  => [],
+        'active_tid'  => 0,
+        'page'        => 0,
+        'total_pages' => 1,
+        'total'       => 0,
+      ],
+    ],
+    'mlp_announcement_detail' => [
+      'variables' => [
+        'title'      => '',
+        'body'       => '',
+        'created'    => NULL,
+        'sticky'     => FALSE,
+        'featured'   => FALSE,
+        'categories' => [],
+      ],
+    ],
   ];
 }
 
