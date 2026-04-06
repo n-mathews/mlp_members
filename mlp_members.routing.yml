@@ -37,3 +37,11 @@ mlp_members.events_feed:
     _title: 'Events JSON feed'
   requirements:
     _role: 'authenticated'
+
+mlp_members.settings:
+  path: '/admin/config/mlp-members'
+  defaults:
+    _form: '\Drupal\mlp_members\Form\MemberSettingsForm'
+    _title: 'MLP Members settings'
+  requirements:
+    _permission: 'manage google drive settings'

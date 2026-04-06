@@ -1,7 +1,6 @@
 mlp_members.settings:
-  path: '/admin/config/mlp-members'
-  defaults:
-    _form: '\Drupal\mlp_members\Form\MemberSettingsForm'
-    _title: 'MLP Members settings'
-  requirements:
-    _permission: 'manage google drive settings'
+  title: 'MLP Members'
+  description: 'Configure Google Drive integration and member portal settings.'
+  route_name: mlp_members.settings
+  parent: system.admin_config_content
+  weight: 10
