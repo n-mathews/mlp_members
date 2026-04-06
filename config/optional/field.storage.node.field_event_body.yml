@@ -1,17 +1,18 @@
 langcode: en
 status: true
 dependencies:
+  enforced:
+    module:
+      - mlp_members
   module:
     - node
-id: node.field_event_location
-field_name: field_event_location
+    - text
+id: node.field_event_body
+field_name: field_event_body
 entity_type: node
-type: string
-settings:
-  max_length: 255
-  is_ascii: false
-  case_sensitive: false
-module: core
+type: text_long
+settings: {}
+module: text
 locked: false
 cardinality: 1
 translatable: true

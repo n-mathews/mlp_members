@@ -1,15 +1,19 @@
 langcode: en
 status: true
 dependencies:
+  enforced:
+    module:
+      - mlp_members
   module:
+    - link
     - node
-    - text
-id: node.field_announcement_body
-field_name: field_announcement_body
+id: node.field_event_link
+field_name: field_event_link
 entity_type: node
-type: text_long
-settings: {}
-module: text
+type: link
+settings:
+  title: 1
+module: link
 locked: false
 cardinality: 1
 translatable: true

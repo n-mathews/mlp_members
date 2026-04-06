@@ -1,6 +1,9 @@
 langcode: en
 status: true
-dependencies: {}
+dependencies:
+  enforced:
+    module:
+      - mlp_members
 name: Event
 type: event
 description: 'Community events, board meetings, and seasonal gatherings.'
