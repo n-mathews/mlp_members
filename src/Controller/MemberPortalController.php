@@ -336,8 +336,8 @@ class MemberPortalController extends ControllerBase {
       $query = $storage->getQuery()
         ->condition('type', 'event')
         ->condition('status', 1)
-        ->condition('field_event_date', $now, '>=')
-        ->sort('field_event_date', 'ASC')
+        ->condition('field_event_date.value', $now, '>=')
+        ->sort('field_event_date.value', 'ASC')
         ->range(0, $limit)
         ->accessCheck(TRUE);
       $ids = $query->execute();
@@ -350,10 +350,14 @@ class MemberPortalController extends ControllerBase {
             'title' => $node->get('field_event_link')->title ?: $this->t('Join meeting'),
           ];
         }
+        // daterange stores start in ->value, end in ->end_value
+        $date_field = $node->hasField('field_event_date') && !$node->get('field_event_date')->isEmpty()
+          ? $node->get('field_event_date')->first()
+          : NULL;
         $items[] = [
           'title'    => $node->getTitle(),
-          'date'     => $this->fieldValue($node, 'field_event_date', ''),
-          'end_date' => $this->fieldValue($node, 'field_event_end_date'),
+          'date'     => $date_field ? $date_field->value : '',
+          'end_date' => $date_field ? $date_field->end_value : NULL,
           'location' => $this->fieldValue($node, 'field_event_location'),
           'body'     => $this->fieldValue($node, 'field_event_body', ''),
           'all_day'  => (bool) $this->fieldValue($node, 'field_all_day', FALSE),
