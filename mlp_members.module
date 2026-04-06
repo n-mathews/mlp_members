@@ -1,0 +1,62 @@
+<?php
+
+/**
+ * @file
+ * mlp_members.module — Member portal for Meadow Lane Park.
+ */
+
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_theme().
+ */
+function mlp_members_theme(): array {
+  return [
+    'mlp_member_portal' => [
+      'variables' => [
+        'featured'      => NULL,
+        'announcements' => [],
+        'events'        => [],
+      ],
+    ],
+    'mlp_member_documents' => [
+      'variables' => [
+        'sections'      => [],
+        'drive_enabled' => FALSE,
+      ],
+    ],
+    'mlp_member_access_denied' => [
+      'variables' => [],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ *
+ * Adds a "Documents" local task tab on the member portal page.
+ */
+function mlp_members_local_tasks_alter(array &$data, string $route_name): void {
+  if (in_array($route_name, ['mlp_members.portal', 'mlp_members.documents'])) {
+    $data['tabs'][0]['mlp_members.portal'] = [
+      '#theme'  => 'menu_local_task',
+      '#link'   => [
+        'title'  => t('Dashboard'),
+        'url'    => Url::fromRoute('mlp_members.portal'),
+        'localized_options' => [],
+      ],
+      '#active' => $route_name === 'mlp_members.portal',
+      '#weight' => 0,
+    ];
+    $data['tabs'][0]['mlp_members.documents'] = [
+      '#theme'  => 'menu_local_task',
+      '#link'   => [
+        'title'  => t('Documents'),
+        'url'    => Url::fromRoute('mlp_members.documents'),
+        'localized_options' => [],
+      ],
+      '#active' => $route_name === 'mlp_members.documents',
+      '#weight' => 10,
+    ];
+  }
+}

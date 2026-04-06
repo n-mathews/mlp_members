@@ -1,0 +1,121 @@
+{#
+/**
+ * @file mlp-member-portal.html.twig
+ * Meadow Lane Park — member portal dashboard.
+ */
+#}
+<div class="member-portal">
+
+  {# ── Featured announcement ───────────────────────────── #}
+  {% if featured %}
+    <div class="member-featured-announcement">
+      <span class="member-featured-announcement__badge">{{ 'Featured'|t }}</span>
+      <h2 class="member-featured-announcement__title">{{ featured.title }}</h2>
+      {% if featured.body %}
+        <div class="member-featured-announcement__body prose">
+          {{ featured.body|raw }}
+        </div>
+      {% endif %}
+      <div class="member-featured-announcement__meta">
+        {{ featured.created|format_date('medium') }}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="member-portal__grid">
+
+    {# ── Upcoming events ──────────────────────────────── #}
+    <section class="member-section" aria-labelledby="events-heading">
+      <div class="member-section__header">
+        <h2 id="events-heading" class="member-section__title">{{ 'Upcoming events'|t }}</h2>
+        <a href="/events" class="member-section__link">{{ 'Full calendar'|t }} →</a>
+      </div>
+
+      {% if events %}
+        <div class="member-events">
+          {% for event in events %}
+            <div class="member-event">
+              <div class="member-event__date">
+                <span class="member-event__month">{{ event.date|date('M') }}</span>
+                <span class="member-event__day">{{ event.date|date('j') }}</span>
+              </div>
+              <div class="member-event__body">
+                <h3 class="member-event__title">{{ event.title }}</h3>
+                <div class="member-event__meta">
+                  {% if event.all_day %}
+                    <span>{{ 'All day'|t }}</span>
+                  {% else %}
+                    <span>{{ event.date|date('g:i A') }}</span>
+                    {% if event.end_date %}
+                      <span>–{{ event.end_date|date('g:i A') }}</span>
+                    {% endif %}
+                  {% endif %}
+                  {% if event.location %}
+                    <span class="member-event__location">{{ event.location }}</span>
+                  {% endif %}
+                </div>
+                {% if event.link %}
+                  <a href="{{ event.link.url }}" class="member-event__join-btn" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 20 20" fill="none" width="14" height="14" aria-hidden="true">
+                      <path d="M13 3h4v4M17 3l-7 7M8 5H5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    {{ event.link.title }}
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="member-empty">{{ 'No upcoming events.'|t }}</p>
+      {% endif %}
+    </section>
+
+    {# ── Announcements ────────────────────────────────── #}
+    <section class="member-section" aria-labelledby="announcements-heading">
+      <div class="member-section__header">
+        <h2 id="announcements-heading" class="member-section__title">{{ 'Announcements'|t }}</h2>
+        <a href="/announcements" class="member-section__link">{{ 'All announcements'|t }} →</a>
+      </div>
+
+      {% if announcements %}
+        <div class="member-announcements">
+          {% for item in announcements %}
+            <article class="member-announcement{{ item.sticky ? ' member-announcement--sticky' : '' }}">
+              {% if item.sticky %}
+                <span class="member-announcement__pin" aria-label="{{ 'Pinned'|t }}">
+                  <svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12" aria-hidden="true"><path d="M9.5 1a1 1 0 011 1v1.5h1a1 1 0 010 2H11v5l1 2H4l1-2V5.5H4a1 1 0 010-2h1V2a1 1 0 011-1h3.5z"/></svg>
+                </span>
+              {% endif %}
+              <h3 class="member-announcement__title">{{ item.title }}</h3>
+              {% if item.body %}
+                <div class="member-announcement__body">{{ item.body|striptags|slice(0, 200) }}{% if item.body|striptags|length > 200 %}…{% endif %}</div>
+              {% endif %}
+              <div class="member-announcement__meta">{{ item.created|format_date('medium') }}</div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="member-empty">{{ 'No announcements yet.'|t }}</p>
+      {% endif %}
+    </section>
+
+  </div>{# /.member-portal__grid #}
+
+  {# ── Quick links ──────────────────────────────────── #}
+  <div class="member-quick-links">
+    <a href="/member/documents" class="member-quick-link">
+      <svg viewBox="0 0 24 24" fill="none" width="24" height="24" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span>{{ 'Documents &amp; Forms'|t }}</span>
+    </a>
+    <a href="/events" class="member-quick-link">
+      <svg viewBox="0 0 24 24" fill="none" width="24" height="24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 10h18M8 2v4M16 2v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span>{{ 'Events calendar'|t }}</span>
+    </a>
+    <a href="/announcements" class="member-quick-link">
+      <svg viewBox="0 0 24 24" fill="none" width="24" height="24" aria-hidden="true"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>{{ 'Announcements'|t }}</span>
+    </a>
+  </div>
+
+</div>

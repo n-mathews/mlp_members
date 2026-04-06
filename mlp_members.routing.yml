@@ -1,0 +1,39 @@
+mlp_members.portal:
+  path: '/member'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::portal'
+    _title: 'Member Portal'
+  requirements:
+    _role: 'authenticated'
+
+mlp_members.documents:
+  path: '/member/documents'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::documents'
+    _title: 'Documents & Forms'
+  requirements:
+    _role: 'authenticated'
+
+mlp_members.documents_refresh:
+  path: '/member/documents/refresh'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::refreshDocuments'
+    _title: 'Refresh document cache'
+  requirements:
+    _role: 'administrator'
+
+mlp_members.access_denied:
+  path: '/member/join'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::accessDenied'
+    _title: 'Members only'
+  requirements:
+    _access: 'TRUE'
+
+mlp_members.events_feed:
+  path: '/events/feed.json'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::eventsFeed'
+    _title: 'Events JSON feed'
+  requirements:
+    _role: 'authenticated'
