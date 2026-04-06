@@ -1,0 +1,80 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.event.field_event_date
+    - field.field.node.event.field_event_location
+    - field.field.node.event.field_event_link
+    - field.field.node.event.field_event_body
+    - field.field.node.event.field_all_day
+    - field.field.node.event.field_featured
+    - node.type.event
+  enforced:
+    module:
+      - mlp_members
+id: node.event.default
+targetEntityType: node
+bundle: event
+mode: default
+content:
+  title:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {}
+  field_event_date:
+    type: daterange_default
+    weight: 1
+    region: content
+    settings:
+      format_type: html_datetime
+    third_party_settings: {}
+  field_all_day:
+    type: boolean_checkbox
+    weight: 2
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {}
+  field_event_location:
+    type: string_textfield
+    weight: 3
+    region: content
+    settings:
+      size: 60
+      placeholder: 'e.g. Community tent, Google Meet'
+    third_party_settings: {}
+  field_event_link:
+    type: link_default
+    weight: 4
+    region: content
+    settings:
+      placeholder_url: 'https://meet.google.com/...'
+      placeholder_title: 'e.g. Join Google Meet'
+    third_party_settings: {}
+  field_event_body:
+    type: text_textarea
+    weight: 5
+    region: content
+    settings:
+      rows: 6
+      placeholder: ''
+    third_party_settings: {}
+  field_featured:
+    type: boolean_checkbox
+    weight: 6
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {}
+  status:
+    type: boolean_checkbox
+    weight: 7
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {}
+hidden: {}
