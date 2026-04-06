@@ -36,10 +36,10 @@ class MemberPortalController extends ControllerBase {
     $featured = $this->loadFeaturedAnnouncement();
 
     // Load upcoming events (next 5).
-    $events = $this->loadUpcomingEvents(5);
+    $events = $this->loadUpcomingEvents(8);
 
     // Load recent announcements (not featured, last 5).
-    $announcements = $this->loadRecentAnnouncements(5);
+    $announcements = $this->loadRecentAnnouncements(8);
 
     return [
       '#theme'         => 'mlp_member_portal',
