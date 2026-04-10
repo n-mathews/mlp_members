@@ -62,3 +62,11 @@ mlp_members.announcement_detail:
   requirements:
     _user_is_logged_in: 'TRUE'
     node: \d+
+
+mlp_members.events:
+  path: '/events'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::events'
+    _title: 'Community events'
+  requirements:
+    _user_is_logged_in: 'TRUE'

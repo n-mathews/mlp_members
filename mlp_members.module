@@ -28,6 +28,11 @@ function mlp_members_theme(): array {
     'mlp_member_access_denied' => [
       'variables' => [],
     ],
+    'mlp_events' => [
+      'variables' => [
+        'events' => [],
+      ],
+    ],
     'mlp_announcements' => [
       'variables' => [
         'items'       => [],

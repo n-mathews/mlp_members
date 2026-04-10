@@ -213,6 +213,36 @@ class MemberPortalController extends ControllerBase {
   }
 
   /**
+   * Events calendar page — FullCalendar + upcoming list.
+   */
+  public function events(): array {
+    $upcoming = $this->loadUpcomingEvents(20);
+    return [
+      '#theme'    => 'mlp_events',
+      '#events'   => $upcoming,
+      '#cache'    => [
+        'max-age' => 300,
+        'tags'    => ['node_list:event'],
+      ],
+    ];
+  }
+
+  /**
+   * Events calendar page — FullCalendar + upcoming list.
+   */
+  public function events(): array {
+    $upcoming = $this->loadUpcomingEvents(20);
+    return [
+      '#theme'  => 'mlp_events',
+      '#events' => $upcoming,
+      '#cache'  => [
+        'max-age' => 300,
+        'tags'    => ['node_list:event'],
+      ],
+    ];
+  }
+
+  /**
    * JSON feed for FullCalendar at /events/feed.json.
    */
   public function eventsFeed(): JsonResponse {
@@ -350,17 +380,34 @@ class MemberPortalController extends ControllerBase {
             'title' => $node->get('field_event_link')->title ?: $this->t('Join meeting'),
           ];
         }
-        // daterange stores start in ->value, end in ->end_value
+        // daterange stores start in ->value, end in ->end_value (UTC)
         $date_field = $node->hasField('field_event_date') && !$node->get('field_event_date')->isEmpty()
           ? $node->get('field_event_date')->first()
           : NULL;
+        $all_day   = (bool) $this->fieldValue($node, 'field_all_day', FALSE);
+        $raw_start = $date_field ? $date_field->value : '';
+        $raw_end   = $date_field ? $date_field->end_value : NULL;
+        $site_tz   = new \DateTimeZone(date_default_timezone_get());
+        // Convert UTC to site timezone; all-day events show date only.
+        $start_display = '';
+        $end_display   = NULL;
+        if ($raw_start) {
+          $dt = new \DateTime($raw_start, new \DateTimeZone('UTC'));
+          $dt->setTimezone($site_tz);
+          $start_display = $all_day ? $dt->format('Y-m-d') : $dt->format('Y-m-d H:i:s');
+        }
+        if ($raw_end && !$all_day) {
+          $dt = new \DateTime($raw_end, new \DateTimeZone('UTC'));
+          $dt->setTimezone($site_tz);
+          $end_display = $dt->format('Y-m-d H:i:s');
+        }
         $items[] = [
           'title'    => $node->getTitle(),
-          'date'     => $date_field ? $date_field->value : '',
-          'end_date' => $date_field ? $date_field->end_value : NULL,
+          'date'     => $start_display,
+          'end_date' => $end_display,
           'location' => $this->fieldValue($node, 'field_event_location'),
           'body'     => $this->fieldValue($node, 'field_event_body', ''),
-          'all_day'  => (bool) $this->fieldValue($node, 'field_all_day', FALSE),
+          'all_day'  => $all_day,
           'link'     => $link,
           'id'       => $node->id(),
         ];
