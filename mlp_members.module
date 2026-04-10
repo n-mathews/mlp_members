@@ -90,3 +90,64 @@ function mlp_members_local_tasks_alter(array &$data, ?string $route_name): void 
     '#weight' => 10,
   ];
 }
+
+/**
+ * Redirect anonymous users away from protected pages to login.
+ */
+function mlp_members_page_attachments(array &$attachments): void {
+  $account = \Drupal::currentUser();
+  if (!$account->isAnonymous()) {
+    return;
+  }
+  $path = \Drupal::request()->getPathInfo();
+  $protected = ['/member', '/announcements', '/events'];
+  foreach ($protected as $prefix) {
+    if ($path === $prefix || str_starts_with($path, $prefix . '/')) {
+      $destination = urlencode($path);
+      $response = new \Symfony\Component\HttpFoundation\RedirectResponse('/user/login?destination=' . $destination);
+      $response->send();
+      exit;
+    }
+  }
+}
+
+/**
+ * Implements hook_node_insert().
+ * Redirect to a useful page after saving an announcement or event.
+ */
+function mlp_members_node_insert(\Drupal\node\NodeInterface $node): void {
+  mlp_members_node_redirect($node);
+}
+
+/**
+ * Implements hook_node_update().
+ */
+function mlp_members_node_update(\Drupal\node\NodeInterface $node): void {
+  mlp_members_node_redirect($node);
+}
+
+/**
+ * Redirect after saving member content types.
+ */
+function mlp_members_node_redirect(\Drupal\node\NodeInterface $node): void {
+  $destinations = [
+    'announcement' => '/announcements/' . $node->id(),
+    'event'        => '/events',
+  ];
+  if (isset($destinations[$node->bundle()])) {
+    $response = new \Symfony\Component\HttpFoundation\RedirectResponse($destinations[$node->bundle()]);
+    $response->send();
+    exit;
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ * Set default login destination to /member unless a destination is already set.
+ */
+function mlp_members_form_user_login_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state): void {
+  $request = \Drupal::request();
+  if (!$request->query->get('destination')) {
+    $form['#action'] = '/user/login?destination=%2Fmember';
+  }
+}
