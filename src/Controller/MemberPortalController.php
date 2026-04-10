@@ -369,10 +369,19 @@ class MemberPortalController extends ControllerBase {
         $date_field = $node->hasField('field_event_date') && !$node->get('field_event_date')->isEmpty()
           ? $node->get('field_event_date')->first()
           : NULL;
-        $all_day   = (bool) $this->fieldValue($node, 'field_all_day', FALSE);
         $raw_start = $date_field ? $date_field->value : '';
         $raw_end   = $date_field ? $date_field->end_value : NULL;
         $site_tz   = new \DateTimeZone(date_default_timezone_get());
+
+        // Detect all-day: Date All Day module sets time to T00:00:00/T23:59:59
+        // in UTC, OR the field_all_day boolean is set. Check both.
+        $all_day_field = $node->hasField('field_all_day') && !$node->get('field_all_day')->isEmpty()
+          ? (int) $node->get('field_all_day')->value
+          : 0;
+        $time_suggests_all_day = $raw_start && substr($raw_start, 11) === '00:00:00'
+          && $raw_end && (substr($raw_end, 11) === '23:59:59' || substr($raw_end, 11) === '23:59:00');
+        $all_day = (bool) $all_day_field || $time_suggests_all_day;
+
         // Convert UTC to site timezone; all-day events show date only.
         $start_display = '';
         $end_display   = NULL;
