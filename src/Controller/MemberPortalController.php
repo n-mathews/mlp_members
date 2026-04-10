@@ -228,21 +228,6 @@ class MemberPortalController extends ControllerBase {
   }
 
   /**
-   * Events calendar page — FullCalendar + upcoming list.
-   */
-  public function events(): array {
-    $upcoming = $this->loadUpcomingEvents(20);
-    return [
-      '#theme'  => 'mlp_events',
-      '#events' => $upcoming,
-      '#cache'  => [
-        'max-age' => 300,
-        'tags'    => ['node_list:event'],
-      ],
-    ];
-  }
-
-  /**
    * JSON feed for FullCalendar at /events/feed.json.
    */
   public function eventsFeed(): JsonResponse {
