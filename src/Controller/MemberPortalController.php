@@ -378,8 +378,11 @@ class MemberPortalController extends ControllerBase {
         $all_day_field = $node->hasField('field_all_day') && !$node->get('field_all_day')->isEmpty()
           ? (int) $node->get('field_all_day')->value
           : 0;
-        $time_suggests_all_day = $raw_start && substr($raw_start, 11) === '00:00:00'
-          && $raw_end && (substr($raw_end, 11) === '23:59:59' || substr($raw_end, 11) === '23:59:00');
+        // daterange stores as Y-m-dTH:i:s or Y-m-d H:i:s — strip the separator.
+        $start_time = $raw_start ? preg_replace('/^[^T ]+[T ]/', '', $raw_start) : '';
+        $end_time   = $raw_end   ? preg_replace('/^[^T ]+[T ]/', '', $raw_end)   : '';
+        $time_suggests_all_day = $raw_start && $start_time === '00:00:00'
+          && $raw_end && ($end_time === '23:59:59' || $end_time === '23:59:00');
         $all_day = (bool) $all_day_field || $time_suggests_all_day;
 
         // Convert UTC to site timezone; all-day events show date only.
