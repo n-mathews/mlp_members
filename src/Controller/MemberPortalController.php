@@ -373,17 +373,22 @@ class MemberPortalController extends ControllerBase {
         $raw_end   = $date_field ? $date_field->end_value : NULL;
         $site_tz   = new \DateTimeZone(date_default_timezone_get());
 
-        // Detect all-day: Date All Day module sets time to T00:00:00/T23:59:59
-        // in UTC, OR the field_all_day boolean is set. Check both.
-        $all_day_field = $node->hasField('field_all_day') && !$node->get('field_all_day')->isEmpty()
-          ? (int) $node->get('field_all_day')->value
-          : 0;
-        // daterange stores as Y-m-dTH:i:s or Y-m-d H:i:s — strip the separator.
-        $start_time = $raw_start ? preg_replace('/^[^T ]+[T ]/', '', $raw_start) : '';
-        $end_time   = $raw_end   ? preg_replace('/^[^T ]+[T ]/', '', $raw_end)   : '';
-        $time_suggests_all_day = $raw_start && $start_time === '00:00:00'
-          && $raw_end && ($end_time === '23:59:59' || $end_time === '23:59:00');
-        $all_day = (bool) $all_day_field || $time_suggests_all_day;
+        // Detect all-day: Date All Day module stores midnight-to-midnight in UTC.
+        // e.g. 2026-05-01T04:00:00 to 2026-05-02T03:59:59 for an Eastern all-day event.
+        // The reliable signal is that end = start + 86399 seconds (23h 59m 59s).
+        $all_day = FALSE;
+        if ($raw_start && $raw_end) {
+          try {
+            $utc = new \DateTimeZone('UTC');
+            $dt_start = new \DateTime($raw_start, $utc);
+            $dt_end   = new \DateTime($raw_end,   $utc);
+            $diff_seconds = $dt_end->getTimestamp() - $dt_start->getTimestamp();
+            // 86399 = 23:59:59, allow small variance for 23:59:00 (86340)
+            $all_day = ($diff_seconds >= 86340 && $diff_seconds <= 86399);
+          } catch (\Exception $e) {
+            $all_day = FALSE;
+          }
+        }
 
         // Convert UTC to site timezone; all-day events show date only.
         $start_display = '';
