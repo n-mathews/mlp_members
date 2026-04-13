@@ -90,7 +90,15 @@ class GoogleDriveService {
         ],
       ]);
 
-      $data  = json_decode($response->getBody()->getContents(), TRUE);
+      $body  = $response->getBody()->getContents();
+      $data  = json_decode($body, TRUE);
+      if (isset($data['error'])) {
+        $this->loggerFactory->get('mlp_members')->error(
+          'Google Drive API error for folder @folder: @response',
+          ['@folder' => $folder_id, '@response' => $body]
+        );
+        return [];
+      }
       $files = $data['files'] ?? [];
 
       // Filter out subfolders — return files only.
@@ -148,13 +156,19 @@ class GoogleDriveService {
         ],
       ]);
 
-      $data  = json_decode($response->getBody()->getContents(), TRUE);
+      $body  = $response->getBody()->getContents();
+      $data  = json_decode($body, TRUE);
       $token = $data['access_token'] ?? NULL;
 
-      if ($token) {
-        $this->cache->set($cid, $token, $now + 3500);
+      if (!$token) {
+        $this->loggerFactory->get('mlp_members')->error(
+          'Google Drive token request failed. Response: @response',
+          ['@response' => $body]
+        );
+        return NULL;
       }
 
+      $this->cache->set($cid, $token, $now + 3500);
       return $token;
     }
     catch (\Exception $e) {
