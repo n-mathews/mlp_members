@@ -109,6 +109,13 @@ class GoogleDriveService {
   /**
    * Gets a short-lived OAuth2 access token using the service account key.
    */
+  /**
+   * URL-safe base64 encode (no padding, - and _ instead of + and /).
+   */
+  private function base64url(string $data): string {
+    return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+  }
+
   private function getAccessToken(string $key_path): ?string {
     $cid = 'mlp_members:drive:token';
     $cached = $this->cache->get($cid);
@@ -117,12 +124,12 @@ class GoogleDriveService {
     }
 
     try {
-      $key  = json_decode(file_get_contents($key_path), TRUE);
-      $now  = time();
-      $exp  = $now + 3600;
+      $key = json_decode(file_get_contents($key_path), TRUE);
+      $now = time();
+      $exp = $now + 3600;
 
-      $header  = base64_encode(json_encode(['alg' => 'RS256', 'typ' => 'JWT']));
-      $payload = base64_encode(json_encode([
+      $header  = $this->base64url(json_encode(['alg' => 'RS256', 'typ' => 'JWT']));
+      $payload = $this->base64url(json_encode([
         'iss'   => $key['client_email'],
         'scope' => self::SCOPE,
         'aud'   => self::TOKEN_URL,
@@ -132,7 +139,7 @@ class GoogleDriveService {
 
       $signing_input = $header . '.' . $payload;
       openssl_sign($signing_input, $signature, $key['private_key'], 'SHA256');
-      $jwt = $signing_input . '.' . base64_encode($signature);
+      $jwt = $signing_input . '.' . $this->base64url($signature);
 
       $response = $this->httpClient->post(self::TOKEN_URL, [
         'form_params' => [
