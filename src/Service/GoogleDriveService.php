@@ -56,7 +56,8 @@ class GoogleDriveService {
    * Clears all cached Drive folder listings.
    */
   public function clearCache(): void {
-    $this->cache->invalidateTags(['mlp_members:drive']);
+    // Use the cache tag invalidator service, not the cache backend directly.
+    \Drupal::service('cache_tags.invalidator')->invalidateTags(['mlp_members:drive']);
   }
 
   // ── Private ──────────────────────────────────────────────
