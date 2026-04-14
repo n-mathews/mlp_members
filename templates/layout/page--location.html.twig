@@ -1,0 +1,177 @@
+{#
+/**
+ * @file page--location.html.twig
+ * Meadow Lane Park — Location page.
+ */
+#}
+<div class="site-wrapper">
+
+  {{ include('@meadow_lane/partials/site-header.html.twig') }}
+
+  {# ── Page banner ──────────────────────────────────────── #}
+  <div class="page-banner">
+    <div class="page-banner__inner container">
+      {% if page.breadcrumb %}
+        <nav class="page-banner__breadcrumb" aria-label="{{ 'Breadcrumb'|t }}">
+          {{ page.breadcrumb }}
+        </nav>
+      {% endif %}
+      <span class="section-label" style="color:rgba(255,255,255,0.55);">
+        {{ 'Find us'|t }}
+      </span>
+      <h1 class="page-banner__title">{{ 'Location'|t }}</h1>
+    </div>
+  </div>
+
+  {% if page.highlighted %}
+    <div class="layout-highlighted container">{{ page.highlighted }}</div>
+  {% endif %}
+
+  <main id="main-content" class="layout-main" role="main" tabindex="-1">
+    <div class="container">
+
+      <section class="inner-page">
+        <p class="inner-page__lead">
+          {{ 'Meadow Lane Park is minutes from the Thousand Islands Bridge and the village of Alexandria Bay, NY — in the heart of one of the most scenic regions in the northeast.'|t }}
+        </p>
+
+        {# ── Two-col: info + map ─────────────────────────── #}
+        <div class="location-layout">
+
+          <div class="location-layout__info">
+
+            <div class="location-detail-block">
+              <span class="section-label">{{ 'Address'|t }}</span>
+              <address class="location-address">
+                {{ contact_address|default('Meadow Lane Park, Alexandria Bay, NY 13607')|t }}
+              </address>
+              {% if contact_phone %}
+                <p><a href="tel:{{ contact_phone }}">{{ contact_phone }}</a></p>
+              {% endif %}
+              {% if contact_email %}
+                <p><a href="mailto:{{ contact_email }}">{{ contact_email }}</a></p>
+              {% endif %}
+            </div>
+
+            <hr class="section-divider" style="margin: var(--space-8) 0;">
+
+            <div class="location-detail-block">
+              <span class="section-label">{{ 'Getting here'|t }}</span>
+              <ul class="location-features-list">
+                <li>{{ 'Minutes from I-81'|t }}</li>
+                <li>{{ 'Minutes from the Thousand Islands Bridge'|t }}</li>
+                <li>{{ 'Easy access to the village shops and restaurants of Clayton and Alexandria Bay'|t }}</li>
+                <li>{{ '30 minutes from the Watertown International Airport'|t }}</li>
+                <li>{{ '90 minutes from the NYS Thruway'|t }}</li>
+              </ul>
+            </div>
+
+            <hr class="section-divider" style="margin: var(--space-8) 0;">
+
+            <div class="location-detail-block">
+              <span class="section-label">{{ 'Nearby'|t }}</span>
+              <div class="nearby-grid">
+                <div class="nearby-item">
+                  <div class="nearby-item__name">{{ 'Boldt Castle'|t }}</div>
+                  <div class="nearby-item__dist">{{ '10 min by boat'|t }}</div>
+                </div>
+                <div class="nearby-item">
+                  <div class="nearby-item__name">{{ 'Thousand Islands Bridge'|t }}</div>
+                  <div class="nearby-item__dist">{{ '2 min'|t }}</div>
+                </div>
+                <div class="nearby-item">
+                  <div class="nearby-item__name">{{ 'Alexandria Bay'|t }}</div>
+                  <div class="nearby-item__dist">{{ '10 min'|t }}</div>
+                </div>
+                <div class="nearby-item">
+                  <div class="nearby-item__name">{{ 'Clayton, NY'|t }}</div>
+                  <div class="nearby-item__dist">{{ '10 min'|t }}</div>
+                </div>
+                <div class="nearby-item">
+                  <div class="nearby-item__name">{{ 'Wellesley Island State Park'|t }}</div>
+                  <div class="nearby-item__dist">{{ '5 min'|t }}</div>
+                </div>
+                <div class="nearby-item">
+                  <div class="nearby-item__name">{{ 'Watertown Airport'|t }}</div>
+                  <div class="nearby-item__dist">{{ '30 min'|t }}</div>
+                </div>
+              </div>
+            </div>
+
+          </div>{# /.location-layout__info #}
+
+          <div class="location-layout__map">
+            {% if page.content['field_map_embed'] %}
+              {{ page.content['field_map_embed'] }}
+            {% else %}
+              {#
+                Google Maps embed — replace YOUR_API_KEY below with your key from
+                Google Cloud Console → APIs & Services → Credentials.
+                Enable: Maps Embed API. Restrict to: meadowlanepark.com/*
+
+                Two options — uncomment the one you want:
+
+                A) Satellite view (dark, no styling needed, shows actual marina):
+                   maptype=satellite
+
+                B) Styled roadmap (dark theme matching site, requires Map ID):
+                   maptype=roadmap&map_id=YOUR_MAP_ID
+
+                If you haven't added an API key yet, the bridge photo shows instead.
+              #}
+              {# API key set via Appearance → Settings → Meadow Lane Park → Google Maps API key #}
+              {% set maps_api_key = google_maps_api_key|default('') %}
+
+              {% if maps_api_key %}
+                <div class="location-map-embed location-map-embed--iframe">
+                  <iframe
+                    src="https://www.google.com/maps/embed/v1/place?key={{ maps_api_key }}&q=20560+Pinehurst+Rd,+Alexandria+Bay,+NY+13607&zoom=15&maptype=satellite"
+                    width="100%"
+                    height="100%"
+                    style="border:0; display:block;"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="{{ 'Map of Meadow Lane Park — 20560 Pinehurst Rd, Alexandria Bay NY'|t }}"
+                  ></iframe>
+                </div>
+              {% else %}
+                {# Fallback until API key is configured #}
+                <div class="location-map-embed">
+                  <img
+                    src="{{ base_path ~ directory }}/images/location-bridge.jpg"
+                    alt="{{ 'Aerial view of the Thousand Islands Bridge and St. Lawrence River near Meadow Lane Park'|t }}"
+                    width="1250" height="900"
+                    loading="lazy"
+                  />
+                </div>
+              {% endif %}
+            {% endif %}
+          </div>
+
+        </div>{# /.location-layout #}
+
+        {# ── Body content from node ───────────────────── #}
+        {% if page.content['body'] %}
+          <div class="prose" style="margin-top: var(--space-12);">
+            {{ page.content['body'] }}
+          </div>
+        {% endif %}
+
+      </section>
+
+      {# ── CTA ─────────────────────────────────────────────── #}
+      <div class="cta-band">
+        <h2>{{ 'Ready to see it for yourself?'|t }}</h2>
+        <p>{{ 'Browse available seasonal homes for sale at Meadow Lane Park.'|t }}</p>
+        <div class="cta-band__actions">
+          <a href="/homes-for-sale" class="btn btn--primary">{{ 'View seasonal homes'|t }}</a>
+        </div>
+      </div>
+
+    </div>{# /.container #}
+  </main>
+
+  {{ include('@meadow_lane/partials/site-footer.html.twig') }}
+
+</div>

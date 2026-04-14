@@ -1,0 +1,91 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.home_listing
+  module:
+    - node
+    - views
+id: home_listings_rss
+label: 'Home listings RSS feed'
+module: views
+description: 'RSS feed of published home listings for Kit automation triggers.'
+tag: meadow_lane
+base_table: node_field_data
+base_field: nid
+display:
+  default:
+    id: default
+    display_title: Default
+    display_plugin: default
+    position: 0
+    display_options:
+      title: 'Meadow Lane Park — New Listings'
+      pager:
+        type: some
+        options:
+          items_per_page: 20
+          offset: 0
+      style:
+        type: rss
+        options:
+          description: 'New seasonal homes for sale at Meadow Lane Park, Alexandria Bay, NY.'
+          mission_description: false
+      row:
+        type: node_rss
+        options:
+          relationship: none
+          item_length: title
+      fields: {}
+      filters:
+        status:
+          value: '1'
+          table: node_field_data
+          field: status
+          plugin_id: node_status
+          id: status
+          group: 1
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          value:
+            home_listing: home_listing
+          plugin_id: bundle
+        field_status_value:
+          id: field_status_value
+          table: node__field_status
+          field: field_status_value
+          value:
+            available: available
+          operator: in
+          plugin_id: list_field
+      sorts:
+        created:
+          id: created
+          table: node_field_data
+          field: created
+          order: DESC
+          plugin_id: date
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      header: {}
+      footer: {}
+      empty: {}
+      relationships: {}
+      arguments: {}
+      display_extenders: {}
+
+  feed_1:
+    id: feed_1
+    display_title: 'RSS feed'
+    display_plugin: feed
+    position: 1
+    display_options:
+      path: homes-for-sale/feed
+      displays:
+        page_1: page_1
+      sitename_title: false
+      display_extenders: {}

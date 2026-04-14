@@ -1,0 +1,70 @@
+# Global styles — auto-attached on every page via meadow_lane.info.yml
+global-styling:
+  version: VERSION
+  css:
+    # SMACSS base bucket — weight controls load order within the bucket.
+    # Lower weight = loaded earlier. variables.css must come first so all
+    # custom properties are defined before reset and typography consume them.
+    base:
+      css/base/variables.css:  { weight: -40 }
+      css/base/reset.css:      { weight: -30 }
+      css/base/typography.css: { weight: -20 }
+    layout:
+      css/layout/layout.css: {}
+      css/layout/grid.css:   {}
+    component:
+      css/components/navigation.css: {}
+      css/components/hero.css:       {}
+      css/components/cards.css:      {}
+      css/components/buttons.css:    {}
+      css/components/forms.css:      {}
+      css/components/amenities.css:  {}
+      css/components/listings.css:   {}
+      css/components/footer.css:     {}
+      css/components/page-banner.css:       {}
+      css/components/inner-pages.css:       {}
+      css/components/homepage-sections.css: {}
+      css/components/homes-for-sale.css:    {}
+      css/components/gallery.css:          {}
+      css/components/listing-signup.css:  {}
+      css/components/member-area.css:       {}
+  js:
+    js/global.js: {}
+    js/navigation.js: {}
+  dependencies:
+    - core/drupal
+
+# Mobile navigation — auto-attached on every page via meadow_lane.info.yml
+navigation:
+  version: VERSION
+  js:
+    js/navigation.js: {}
+
+# Homes for sale listing pages — attach via preprocess or page template
+listings:
+  version: VERSION
+  js:
+    js/listings.js: {}
+  dependencies:
+    - meadow_lane/global-styling
+    - core/drupal
+
+# Member portal — attach when member area pages are active
+member-area:
+  version: VERSION
+  css:
+    component:
+      css/components/member-area.css: {}
+  dependencies:
+    - meadow_lane/global-styling
+
+
+# Photo gallery lightbox — attached on listing detail pages
+gallery:
+  version: VERSION
+  js:
+    js/gallery.js: {}
+  dependencies:
+    - meadow_lane/global-styling
+    - core/drupal
+    - core/once

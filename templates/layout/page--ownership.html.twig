@@ -1,0 +1,206 @@
+{#
+/**
+ * @file page--ownership.html.twig
+ * Meadow Lane Park — Ownership Explained page.
+ *
+ * Explains the resident-owned community model, contrasts it with
+ * traditional land-lease parks, and funnels to homes for sale.
+ *
+ * Path alias: /ownership
+ */
+#}
+<div class="site-wrapper">
+
+  {{ include('@meadow_lane/partials/site-header.html.twig') }}
+
+  {# ── Page banner ──────────────────────────────────────── #}
+  <div class="page-banner">
+    <div class="page-banner__inner container">
+      {% if page.breadcrumb %}
+        <nav class="page-banner__breadcrumb" aria-label="{{ 'Breadcrumb'|t }}">
+          {{ page.breadcrumb }}
+        </nav>
+      {% endif %}
+      <span class="section-label" style="color:rgba(255,255,255,0.55);">
+        {{ 'How it works'|t }}
+      </span>
+      <h1 class="page-banner__title">{{ 'Ownership Explained'|t }}</h1>
+    </div>
+  </div>
+
+  {% if page.highlighted %}
+    <div class="layout-highlighted container">{{ page.highlighted }}</div>
+  {% endif %}
+
+  <main id="main-content" class="layout-main" role="main" tabindex="-1">
+    <div class="container">
+
+      {# ── Lead ──────────────────────────────────────────── #}
+      <section class="inner-page">
+        <p class="inner-page__lead">
+          {{ 'At Meadow Lane Park, buying a home means becoming a co-owner of the community itself. There is no landlord, no land lease, and no outside company controlling where you live.'|t }}
+        </p>
+
+        {# ── What resident-owned means ─────────────────── #}
+        <div class="inner-two-col">
+          <div class="inner-two-col__text">
+            <span class="section-label">{{ 'What it means'|t }}</span>
+            <h2>{{ 'You own the land, together'|t }}</h2>
+            <p>{{ 'When you purchase a home at Meadow Lane Park, you also acquire a proportional share in the cooperative that owns the land beneath the entire community. That cooperative was formally incorporated in 2018.'|t }}</p>
+            <p>{{ 'This means the land can never be sold out from under you by an outside investor, and decisions about the community are made collectively by the people who live here — not by a distant landlord.'|t }}</p>
+          </div>
+          <div class="inner-two-col__image ownership-highlight-card">
+            <div class="ownership-stat">
+              <div class="ownership-stat__number">100%</div>
+              <div class="ownership-stat__label">{{ 'Resident-owned since 2018'|t }}</div>
+            </div>
+            <div class="ownership-stat">
+              <div class="ownership-stat__number">{{ 'No'|t }}</div>
+              <div class="ownership-stat__label">{{ 'Land lease or lot rent'|t }}</div>
+            </div>
+            <div class="ownership-stat">
+              <div class="ownership-stat__number">{{ 'No'|t }}</div>
+              <div class="ownership-stat__label">{{ 'Outside landlord'|t }}</div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <hr class="section-divider">
+
+      {# ── Comparison table ──────────────────────────────── #}
+      <section class="inner-page ownership-comparison">
+        <span class="section-label">{{ 'Side by side'|t }}</span>
+        <h2>{{ 'Resident-owned vs. land-lease'|t }}</h2>
+        <p>{{ 'Most manufactured home communities operate on a land-lease model — you own the home but rent the land it sits on. Meadow Lane Park works differently.'|t }}</p>
+
+        <div class="ownership-table-wrap">
+          <table class="ownership-table">
+            <thead>
+              <tr>
+                <th class="ownership-table__topic">{{ ''|t }}</th>
+                <th class="ownership-table__col ownership-table__col--them">{{ 'Land-lease park'|t }}</th>
+                <th class="ownership-table__col ownership-table__col--us">{{ 'Meadow Lane Park'|t }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ 'Land ownership'|t }}</td>
+                <td class="ownership-table__col--them">
+                  <span class="ownership-badge ownership-badge--no">{{ 'Rented from park owner'|t }}</span>
+                </td>
+                <td class="ownership-table__col--us">
+                  <span class="ownership-badge ownership-badge--yes">{{ 'Co-owned by residents'|t }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td>{{ 'Ongoing costs'|t }}</td>
+                <td class="ownership-table__col--them">
+                  <span class="ownership-badge ownership-badge--no">{{ 'Monthly lot rent — can rise'|t }}</span>
+                </td>
+                <td class="ownership-table__col--us">
+                  <span class="ownership-badge ownership-badge--yes">{{ 'Quarterly assessment only'|t }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td>{{ 'Community decisions'|t }}</td>
+                <td class="ownership-table__col--them">
+                  <span class="ownership-badge ownership-badge--no">{{ 'Made by park owner'|t }}</span>
+                </td>
+                <td class="ownership-table__col--us">
+                  <span class="ownership-badge ownership-badge--yes">{{ 'Voted on by members'|t }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td>{{ 'Risk of land sale'|t }}</td>
+                <td class="ownership-table__col--them">
+                  <span class="ownership-badge ownership-badge--no">{{ 'Yes — park can be sold'|t }}</span>
+                </td>
+                <td class="ownership-table__col--us">
+                  <span class="ownership-badge ownership-badge--yes">{{ 'Land is owned collectively'|t }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td>{{ 'Home resale'|t }}</td>
+                <td class="ownership-table__col--them">
+                  <span class="ownership-badge ownership-badge--no">{{ 'Home only'|t }}</span>
+                </td>
+                <td class="ownership-table__col--us">
+                  <span class="ownership-badge ownership-badge--yes">{{ 'Home + ownership share'|t }}</span>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+        <p class="ownership-table-note">{{ '* Meadow Lane Park members pay a quarterly assessment covering community operating expenses, grounds maintenance, and property taxes. There is no monthly lot rent.'|t }}</p>
+      </section>
+
+      <hr class="section-divider">
+
+      {# ── How it works step by step ─────────────────────── #}
+      <section class="inner-page">
+        <span class="section-label">{{ 'The process'|t }}</span>
+        <h2>{{ 'Buying a home at Meadow Lane Park'|t }}</h2>
+
+        <div class="ownership-steps">
+
+          <div class="ownership-step">
+            <div class="ownership-step__num">1</div>
+            <div class="ownership-step__body">
+              <h3>{{ 'Find a home you love'|t }}</h3>
+              <p>{{ 'Browse available manufactured homes on our Homes for Sale page, or sign up to be notified when new homes are listed.'|t }}</p>
+            </div>
+          </div>
+
+          <div class="ownership-step">
+            <div class="ownership-step__num">2</div>
+            <div class="ownership-step__body">
+              <h3>{{ 'Buy directly from the seller'|t }}</h3>
+              <p>{{ 'Sales are negotiated directly between the buyer and the individual homeowner. All sales require approval from the Meadow Lane Park Board of Directors before completing.'|t }}</p>
+            </div>
+          </div>
+
+          <div class="ownership-step">
+            <div class="ownership-step__num">3</div>
+            <div class="ownership-step__body">
+              <h3>{{ 'Become a member'|t }}</h3>
+              <p>{{ 'When your purchase completes, your ownership share in the community cooperative transfers to you automatically. You become a full member with voting rights.'|t }}</p>
+            </div>
+          </div>
+
+          <div class="ownership-step">
+            <div class="ownership-step__num">4</div>
+            <div class="ownership-step__body">
+              <h3>{{ 'Enjoy your summers on the river'|t }}</h3>
+              <p>{{ 'Spend your season at Meadow Lane Park knowing that the land is yours — alongside your neighbours — and that the community is governed by the people who love it most.'|t }}</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {# ── Drupal body content (editable rich text) ─────── #}
+      {% if page.content %}
+        <hr class="section-divider">
+        <section class="inner-page prose">
+          {{ page.content }}
+        </section>
+      {% endif %}
+
+      {# ── CTA ───────────────────────────────────────────── #}
+      <div class="cta-band">
+        <h2>{{ 'Ready to own your piece of the 1000 Islands?'|t }}</h2>
+        <p>{{ 'Browse available seasonal homes for sale at Meadow Lane Park.'|t }}</p>
+        <div class="cta-band__actions">
+          <a href="/homes-for-sale" class="btn btn--primary">{{ 'View seasonal homes'|t }}</a>
+        </div>
+      </div>
+
+    </div>{# /.container #}
+  </main>
+
+  {{ include('@meadow_lane/partials/site-footer.html.twig') }}
+
+</div>

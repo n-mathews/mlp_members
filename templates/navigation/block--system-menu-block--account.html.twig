@@ -1,0 +1,15 @@
+{#
+/**
+ * @file block--system-menu-block--account.html.twig
+ * Meadow Lane Park — user account menu block.
+ *
+ * Rendered when Drupal places the Account menu block in any region.
+ * Displays Log in / Register for anonymous users, and My account /
+ * Log out for authenticated users.
+ */
+#}
+{% if content %}
+  <div{{ attributes.addClass('block', 'block--menu--account') }}>
+    {{ content }}
+  </div>
+{% endif %}

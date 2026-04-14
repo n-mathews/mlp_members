@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies: {}
+name: 'Home Listing'
+type: home_listing
+description: 'A seasonal manufactured home available for sale at Meadow Lane Park.'
+help: ''
+new_revision: false
+preview_mode: 1
+display_submitted: false

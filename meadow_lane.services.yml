@@ -1,0 +1,11 @@
+services:
+  # Register a Twig namespace so that templates can use
+  # {{ include('@meadow_lane/partials/foo.html.twig') }}
+  # The namespace resolves to themes/custom/meadow_lane/templates/
+  # (Drupal's ThemeRegistry already maps @meadow_lane → the theme's
+  #  templates/ directory, so all subdirectories are reachable by path.
+  #  This service entry is included for explicitness and future extension.)
+  twig.extension.meadow_lane:
+    class: Drupal\Core\Template\TwigExtension
+    tags:
+      - { name: twig.extension }

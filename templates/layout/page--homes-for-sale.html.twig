@@ -1,0 +1,116 @@
+{#
+/**
+ * @file page--homes-for-sale.html.twig
+ * Meadow Lane Park — Homes for Sale listing page.
+ *
+ * The listing grid is rendered by the 'homes_for_sale' View
+ * placed in the Content region via Structure > Block layout,
+ * or served directly via the View's page display at /homes-for-sale.
+ *
+ * The filter bar at the top is driven by listings.js and reads
+ * data-price / data-beds / data-status attributes on each .listing-card.
+ */
+#}
+<div class="site-wrapper">
+
+  {{ include('@meadow_lane/partials/site-header.html.twig') }}
+
+  {# ── Page banner ──────────────────────────────────────── #}
+  <div class="page-banner">
+    <div class="page-banner__inner container">
+      {% if page.breadcrumb %}
+        <nav class="page-banner__breadcrumb" aria-label="{{ 'Breadcrumb'|t }}">
+          {{ page.breadcrumb }}
+        </nav>
+      {% endif %}
+      <span class="section-label" style="color:rgba(255,255,255,0.55);">
+        {{ 'Meadow Lane Park'|t }}
+      </span>
+      <h1 class="page-banner__title">{{ 'Seasonal Homes for Sale'|t }}</h1>
+    </div>
+  </div>
+
+  {% if page.highlighted %}
+    <div class="layout-highlighted container">{{ page.highlighted }}</div>
+  {% endif %}
+
+  <main id="main-content" class="layout-main" role="main" tabindex="-1">
+    <div class="container">
+
+      {# ── Intro ─────────────────────────────────────────── #}
+      <div class="listings-intro">
+        <p class="listings-intro__text">
+          {{ 'Browse available manufactured homes for sale at Meadow Lane Park.'|t }}
+        </p>
+        <a href="/about#ownership" class="listings-intro__link">
+          {{ 'How resident ownership works'|t }} →
+        </a>
+      </div>
+
+      {# ── Filter bar ────────────────────────────────────── #}
+      <div class="listings-filter-bar" role="search" aria-label="{{ 'Filter listings'|t }}">
+        <form class="listings-filter-form" novalidate>
+
+          <div class="listings-filter__group">
+            <label for="filter-status" class="listings-filter__label">
+              {{ 'Status'|t }}
+            </label>
+            <select id="filter-status" name="status" class="listings-filter__select">
+              <option value="all">{{ 'All listings'|t }}</option>
+              <option value="available">{{ 'Available'|t }}</option>
+              <option value="pending">{{ 'Under offer'|t }}</option>
+            </select>
+          </div>
+
+          <div class="listings-filter__group">
+            <label for="filter-beds" class="listings-filter__label">
+              {{ 'Bedrooms'|t }}
+            </label>
+            <select id="filter-beds" name="min_beds" class="listings-filter__select">
+              <option value="0">{{ 'Any'|t }}</option>
+              <option value="1">{{ '1+'|t }}</option>
+              <option value="2">{{ '2+'|t }}</option>
+              <option value="3">{{ '3+'|t }}</option>
+            </select>
+          </div>
+
+          <div class="listings-filter__group">
+            <label for="filter-price" class="listings-filter__label">
+              {{ 'Max price'|t }}
+            </label>
+            <select id="filter-price" name="max_price" class="listings-filter__select">
+              <option value="0">{{ 'Any'|t }}</option>
+              <option value="100000">{{ 'Under $100k'|t }}</option>
+              <option value="150000">{{ 'Under $150k'|t }}</option>
+              <option value="200000">{{ 'Under $200k'|t }}</option>
+              <option value="250000">{{ 'Under $250k'|t }}</option>
+            </select>
+          </div>
+
+          <div class="listings-filter__count" aria-live="polite">
+            <span class="listings-count"></span>
+          </div>
+
+        </form>
+      </div>
+
+      {# ── Listings grid — rendered by View or fallback ──── #}
+      <div class="listings-section">
+        {{ page.content }}
+      </div>
+
+      {# ── Email signup block (Simplenews) ────────────────── #}
+      {# Place the Simplenews subscription block in the Content region,
+         restricted to /homes-for-sale via Structure → Block layout.
+         Wrap it in a Custom block using the listing-signup block type
+         for the styled card treatment, or rely on the CSS selectors
+         in listing-signup.css which target Simplenews form elements. #}
+
+
+
+    </div>{# /.container #}
+  </main>
+
+  {{ include('@meadow_lane/partials/site-footer.html.twig') }}
+
+</div>

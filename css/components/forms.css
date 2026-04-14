@@ -1,0 +1,70 @@
+/**
+ * forms.css — Meadow Lane Park
+ */
+
+.form-group {
+  margin-bottom: var(--space-5);
+}
+
+label,
+.form-label {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--clr-text-mid);
+  margin-bottom: var(--space-2);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+input[type="number"],
+select,
+textarea {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: var(--clr-text-dark);
+  background: white;
+  border: 1px solid var(--clr-stone);
+  border-radius: var(--radius-md);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  appearance: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--clr-teal);
+  box-shadow: 0 0 0 3px rgba(74,124,111,0.15);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: var(--leading-normal);
+}
+
+.form-hint {
+  font-size: var(--text-xs);
+  color: var(--clr-text-light);
+  margin-top: var(--space-1);
+}
+
+.form-error {
+  font-size: var(--text-xs);
+  color: var(--clr-error);
+  margin-top: var(--space-1);
+}
+
+input.error,
+textarea.error,
+select.error {
+  border-color: var(--clr-error);
+}
+

@@ -1,0 +1,22 @@
+{#
+/**
+ * @file views-view--homes-for-sale.html.twig
+ * Meadow Lane Park — wrapper template for the homes_for_sale View.
+ * Drupal matches this via the view ID: views-view--homes-for-sale.html.twig
+ */
+#}
+{% if rows %}
+  <div{{ attributes.addClass('listings-grid-wrapper') }}>
+    {{ rows }}
+  </div>
+{% elseif empty %}
+  <div class="listings-empty-state">
+    {{ empty }}
+  </div>
+{% endif %}
+
+{% if pager %}
+  <div class="listings-pager">
+    {{ pager }}
+  </div>
+{% endif %}

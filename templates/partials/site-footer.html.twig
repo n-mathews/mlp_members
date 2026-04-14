@@ -1,0 +1,111 @@
+{#
+/**
+ * @file site-footer.html.twig
+ * Meadow Lane Park — site footer partial.
+ *
+ * ALL footer menus are managed through Drupal's Block layout UI.
+ * Go to: Structure → Block layout → Meadow Lane Park
+ *
+ * Required block assignments:
+ *   Footer First region  → Community menu
+ *                          (System menu block, menu: Footer — Community)
+ *   Footer Second region → Seasonal Homes menu
+ *                          (System menu block, menu: Footer — Seasonal Homes)
+ *   Footer Third region  → Members menu
+ *                          (System menu block, menu: Footer — Members)
+ *
+ * Recommended Drupal menus to create:
+ *   /admin/structure/menu/add
+ *   - "Footer — Community"      (machine: footer-community)
+ *   - "Footer — Seasonal Homes" (machine: footer-seasonal-homes)
+ *   - "Footer — Members"        (machine: footer-members)
+ */
+#}
+<footer class="site-footer" role="contentinfo">
+  <div class="footer__top">
+
+    {# ── Brand column ────────────────────────────────────── #}
+    <div class="footer__brand">
+      <div class="footer__brand-logo">
+        <img src="{{ base_path ~ directory }}/images/logo-footer.png"
+             alt="{{ 'Meadow Lane Park'|t }}"
+             width="72" height="55"
+             loading="lazy"/>
+      </div>
+      <div class="footer__brand-name">{{ 'Meadow Lane Park'|t }}</div>
+      <p class="footer__brand-desc">
+        {{ footer_tagline|default('A seasonal, resident-owned community on the St. Lawrence River — incorporated 2018.')|t }}
+      </p>
+      {% if social_facebook %}
+        <a
+          href="{{ social_facebook }}"
+          class="footer__social-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="{{ 'Follow Meadow Lane Park on Facebook'|t }}"
+        >{{ 'Facebook'|t }}</a>
+      {% endif %}
+    </div>
+
+    {# ── Community column ────────────────────────────────── #}
+    {# Assign: Footer First region → System menu block (Footer — Community) #}
+    <div class="footer__col">
+      <h2 class="footer__col-heading">{{ 'Community'|t }}</h2>
+      {% if page.footer_first %}
+        {{ page.footer_first }}
+      {% elseif logged_in %}
+        <p class="footer__admin-hint">
+          <a href="{{ path('block.admin_demo', {'theme': 'meadow_lane'}) }}">
+            {{ 'Assign a menu block to Footer First'|t }}
+          </a>
+        </p>
+      {% endif %}
+    </div>
+
+    {# ── Seasonal Homes column ───────────────────────────── #}
+    {# Assign: Footer Second region → System menu block (Footer — Seasonal Homes) #}
+    <div class="footer__col">
+      <h2 class="footer__col-heading">{{ 'Seasonal Homes'|t }}</h2>
+      {% if page.footer_second %}
+        {{ page.footer_second }}
+      {% elseif logged_in %}
+        <p class="footer__admin-hint">
+          <a href="{{ path('block.admin_demo', {'theme': 'meadow_lane'}) }}">
+            {{ 'Assign a menu block to Footer Second'|t }}
+          </a>
+        </p>
+      {% endif %}
+    </div>
+
+    {# ── Members column ──────────────────────────────────── #}
+    <div class="footer__col">
+      <h2 class="footer__col-heading">{{ 'Members'|t }}</h2>
+      {% if page.footer_third %}
+        {{ page.footer_third }}
+      {% elseif logged_in %}
+        <p class="footer__admin-hint">
+          <a href="{{ path('block.admin_demo', {'theme': 'meadow_lane'}) }}">
+            {{ 'Assign a menu block to Footer Third'|t }}
+          </a>
+        </p>
+      {% endif %}
+      {# Account menu (Log in / Log out) appended below member links #}
+      {% if page.header %}
+        <div class="footer__account-menu">
+          {{ page.header }}
+        </div>
+      {% endif %}
+    </div>
+
+  </div>{# /.footer__top #}
+
+  <div class="footer__bottom">
+    <span>&copy; {{ "now"|date("Y") }} {{ 'Meadow Lane Park. All rights reserved.'|t }}</span>
+    <span>{{ 'Alexandria Bay, New York · 1000 Islands Region'|t }}</span>
+  </div>
+
+  {% if page.footer_bottom %}
+    <div class="footer__legal">{{ page.footer_bottom }}</div>
+  {% endif %}
+
+</footer>

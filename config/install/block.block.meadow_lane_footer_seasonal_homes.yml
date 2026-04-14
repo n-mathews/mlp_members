@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.footer-seasonal-homes
+  theme:
+    - meadow_lane
+id: meadow_lane_footer_seasonal_homes
+theme: meadow_lane
+region: footer_second
+weight: 0
+provider: null
+plugin: 'system_menu_block:footer-seasonal-homes'
+settings:
+  id: 'system_menu_block:footer-seasonal-homes'
+  label: 'Footer — Seasonal Homes'
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 1
+  expand_all_items: false
+visibility: {}

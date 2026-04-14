@@ -1,0 +1,157 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.home_listing
+  module:
+    - node
+    - user
+id: homes_for_sale
+label: 'Homes for Sale'
+module: views
+description: 'Lists all available seasonal homes at Meadow Lane Park.'
+tag: meadow_lane
+base_table: node_field_data
+base_field: nid
+display:
+  default:
+    id: default
+    display_title: Default
+    display_plugin: default
+    position: 0
+    display_options:
+      title: 'Homes for Sale'
+      pager:
+        type: full
+        options:
+          items_per_page: 12
+          offset: 0
+          id: 0
+          total_pages: null
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+          quantity: 9
+      style:
+        type: html_list
+        options:
+          row_class: listing-card-wrapper
+          class: listings-grid
+          wrapper_class: listings-grid-wrapper
+          grouping: []
+          uses_fields: false
+          default_row_class: true
+      row:
+        type: 'entity:node'
+        options:
+          relationship: none
+          view_mode: teaser
+          rendering_language: '***LANGUAGE_language_interface***'
+      fields: {}
+      filters:
+        status:
+          value: '1'
+          table: node_field_data
+          field: status
+          plugin_id: node_status
+          id: status
+          expose:
+            operator: ''
+          group: 1
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          value:
+            home_listing: home_listing
+          plugin_id: bundle
+        field_status_value:
+          id: field_status_value
+          table: node__field_status
+          field: field_status_value
+          value:
+            available: available
+            pending: pending
+          operator: in
+          plugin_id: list_field
+          exposed: true
+          expose:
+            operator_id: field_status_value_op
+            label: 'Filter by status'
+            description: ''
+            use_operator: false
+            operator: field_status_value_op
+            operator_limit_selection: false
+            operator_list: {}
+            identifier: status_filter
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+      sorts:
+        created:
+          id: created
+          table: node_field_data
+          field: created
+          order: DESC
+          plugin_id: date
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      header: {}
+      footer: {}
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          empty: true
+          content: '<p class="listings-empty">No homes are currently listed for sale. Add your email below to be notified when a new home becomes available.</p>'
+          plugin_id: text_custom
+      relationships: {}
+      arguments: {}
+      display_extenders: {}
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {}
+
+  page_1:
+    id: page_1
+    display_title: 'Homes for Sale page'
+    display_plugin: page
+    position: 1
+    display_options:
+      path: homes-for-sale
+      menu:
+        type: normal
+        title: 'Homes for Sale'
+        description: 'Browse seasonal manufactured homes for sale at Meadow Lane Park.'
+        expanded: false
+        parent: ''
+        weight: 0
+        context: '0'
+        menu_name: main
+      display_extenders: {}
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {}

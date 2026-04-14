@@ -1,0 +1,176 @@
+/**
+ * listing-signup.css — Meadow Lane Park
+ * Targets the exact Simplenews block markup from the live site.
+ *
+ * Block outer:  #block-meadow-lane-simplenewssubscription
+ *               .block.block--simplenews-subscription-block
+ * Form:         form#simplenews-subscriptions-block-{uuid}
+ * Message div:  #edit-message  (static text, no input)
+ * Actions div:  .form-actions  containing input[type=submit] + a[manage]
+ */
+
+/* ── Outer card ──────────────────────────────────────── */
+#block-meadow-lane-simplenewssubscription,
+.block--simplenews-subscription-block {
+  background: var(--clr-slate);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8) var(--space-10);
+  margin: var(--space-10) 0;
+}
+
+/* ── Message text ────────────────────────────────────── */
+#edit-message,
+.block--simplenews-subscription-block .form-type-item {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.7);
+  margin-bottom: var(--space-5);
+  line-height: var(--leading-snug);
+}
+
+/* ── Form layout ─────────────────────────────────────── */
+#block-meadow-lane-simplenewssubscription form,
+.block--simplenews-subscription-block form {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+/* Hide the empty subscriptions wrapper div */
+#edit-subscriptions-wrapper,
+.block--simplenews-subscription-block .field--name-subscriptions {
+  display: none;
+}
+
+/* ── Email input — injected by the block template ────── */
+.simplenews-email-field {
+  flex: 1;
+  min-width: 220px;
+  padding: 10px 14px;
+  height: 42px;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--clr-text-dark);
+  background: white;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--radius-md);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  appearance: none;
+  margin: 0;
+}
+
+.simplenews-email-field:focus {
+  outline: none;
+  border-color: var(--clr-teal-mid);
+  box-shadow: 0 0 0 3px rgba(110,158,146,0.3);
+}
+
+.simplenews-email-field::placeholder {
+  color: var(--clr-text-light);
+}
+
+/* ── Actions row ─────────────────────────────────────── */
+.block--simplenews-subscription-block .form-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+  flex-shrink: 0;
+}
+
+/* ── Submit button ───────────────────────────────────── */
+#block-meadow-lane-simplenewssubscription input[type="submit"],
+.block--simplenews-subscription-block input[type="submit"] {
+  background: var(--clr-teal) !important;
+  color: white !important;
+  border: none !important;
+  padding: 10px 22px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition-fast);
+  appearance: none;
+  margin: 0;
+  box-shadow: none !important;
+}
+
+#block-meadow-lane-simplenewssubscription input[type="submit"]:hover,
+.block--simplenews-subscription-block input[type="submit"]:hover {
+  background: var(--clr-teal-mid) !important;
+}
+
+/* ── Hide "Manage existing" link ─────────────────────── */
+#edit-manage,
+.block--simplenews-subscription-block a[href*="simplenews"],
+.block--simplenews-subscription-block a[id="edit-manage"] {
+  display: none !important;
+}
+
+/* ── Honeypot / hidden spam fields ──────────────────── */
+.block--simplenews-subscription-block .js-form-type-honeypot {
+  display: none !important;
+}
+
+/* ── Status messages ─────────────────────────────────── */
+.block--simplenews-subscription-block .messages--status,
+.block--simplenews-subscription-block .messages--error {
+  color: rgba(255,255,255,0.85);
+  font-size: var(--text-sm);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  margin-top: var(--space-3);
+}
+
+/* ── Responsive ──────────────────────────────────────── */
+@media (max-width: 767px) {
+  #block-meadow-lane-simplenewssubscription,
+  .block--simplenews-subscription-block {
+    padding: var(--space-6);
+  }
+
+  #block-meadow-lane-simplenewssubscription form,
+  .block--simplenews-subscription-block form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .simplenews-email-field {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .block--simplenews-subscription-block .form-actions {
+    width: 100%;
+  }
+
+  .block--simplenews-subscription-block input[type="submit"] {
+    width: 100%;
+  }
+}
+
+/* ── Heading injected by block template ──────────────── */
+.simplenews-signup-heading {
+  margin-bottom: var(--space-5);
+}
+
+.simplenews-signup-heading__title {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: white;
+  margin-bottom: var(--space-1);
+}
+
+.simplenews-signup-heading__desc {
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.6);
+  margin: 0;
+  line-height: var(--leading-snug);
+}

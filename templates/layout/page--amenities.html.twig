@@ -1,0 +1,136 @@
+{#
+/**
+ * @file page--amenities.html.twig
+ * Meadow Lane Park — Amenities page.
+ *
+ * Assumes a Drupal basic page node with alias /amenities.
+ * Amenity items are intended to come from a View or paragraph field
+ * (field_amenities) on the node; the six cards below are a static fallback.
+ */
+#}
+<div class="site-wrapper">
+
+  {{ include('@meadow_lane/partials/site-header.html.twig') }}
+
+  {# ── Page banner ──────────────────────────────────────── #}
+  <div class="page-banner">
+    <div class="page-banner__inner container">
+      {% if page.breadcrumb %}
+        <nav class="page-banner__breadcrumb" aria-label="{{ 'Breadcrumb'|t }}">
+          {{ page.breadcrumb }}
+        </nav>
+      {% endif %}
+      <span class="section-label" style="color:rgba(255,255,255,0.55);">
+        {{ 'Community features'|t }}
+      </span>
+      <h1 class="page-banner__title">{{ 'Amenities'|t }}</h1>
+    </div>
+  </div>
+
+  {% if page.highlighted %}
+    <div class="layout-highlighted container">{{ page.highlighted }}</div>
+  {% endif %}
+
+  <main id="main-content" class="layout-main" role="main" tabindex="-1">
+    <div class="container">
+
+      {# ── Intro ─────────────────────────────────────────── #}
+      <section class="inner-page">
+        <p class="inner-page__lead">
+          {{ 'Everything you need for a great seasonal escape — with the natural beauty of the 1000 Islands right outside your door from spring through fall.'|t }}
+        </p>
+
+        {# ── Amenities grid ─────────────────────────────── #}
+        {% if page.content['field_amenities'] %}
+          {# Render from field / View when available #}
+          <div class="amenities__grid">
+            {{ page.content['field_amenities'] }}
+          </div>
+        {% else %}
+          {# Static fallback cards #}
+          <div class="amenities__grid">
+
+            <div class="card">
+              <div class="card__icon">
+                <svg viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M4 18 Q7 14 11 16 Q15 18 18 14" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M2 16 Q5.5 12 9 14 Q12.5 16 16 12 Q18 10 20 12" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="11" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/></svg>
+              </div>
+              <h3 class="card__title">{{ 'River access'|t }}</h3>
+              <p class="card__body">{{ 'Private waterfront access to the St. Lawrence River with docking and launching facilities for residents.'|t }}</p>
+            </div>
+
+            <div class="card">
+              <div class="card__icon">
+                <svg viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M2 18 L11 4 L20 18 Z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M6 18 L6 12 Q6 10 11 10 Q16 10 16 12 L16 18" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+              </div>
+              <h3 class="card__title">{{ 'Community gathering spaces'|t }}</h3>
+              <p class="card__body">{{ 'A large community tent and patio serve as the hub for member events, socials, and meetings throughout the season.'|t }}</p>
+            </div>
+
+            <div class="card">
+              <div class="card__icon">
+                <svg viewBox="0 0 22 22" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 11 Q11 7 14 11 Q11 15 8 11Z" fill="currentColor" opacity="0.5"/></svg>
+              </div>
+              <h3 class="card__title">{{ 'Recreation areas'|t }}</h3>
+              <p class="card__body">{{ 'Walking paths, green spaces, and seasonal recreational areas set within beautifully maintained grounds.'|t }}</p>
+            </div>
+
+            <div class="card">
+              <div class="card__icon">
+                <svg viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M6 18 Q8 14 11 12 Q14 14 16 18" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M9 12 Q11 8 11 6 Q11 8 13 12" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/><path d="M4 18 L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 20 L19 20" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/></svg>
+              </div>
+              <h3 class="card__title">{{ 'Waterfront patio &amp; fire pit'|t }}</h3>
+              <p class="card__body">{{ 'A waterfront patio with Adirondack chairs and a wood-burning fire pit — perfect for relaxing evenings on the river.'|t }}</p>
+            </div>
+
+            <div class="card">
+              <div class="card__icon">
+                <svg viewBox="0 0 22 22" fill="none" aria-hidden="true"><rect x="4" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M4 9 L18 9" stroke="currentColor" stroke-width="1.2"/><path d="M8 4 L8 9" stroke="currentColor" stroke-width="1.2"/><path d="M14 4 L14 9" stroke="currentColor" stroke-width="1.2"/></svg>
+              </div>
+              <h3 class="card__title">{{ 'Seasonal events'|t }}</h3>
+              <p class="card__body">{{ 'A full calendar of community events — summer socials, holiday gatherings, and activities for all ages.'|t }}</p>
+            </div>
+
+            <div class="card">
+              <div class="card__icon">
+                <svg viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M2 16 L4 10 L18 10 L20 16 Z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M7 10 L7 7 Q7 5 9 5 L13 5 Q15 5 15 7 L15 10" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M2 18 L20 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="11" y1="10" x2="11" y2="16" stroke="currentColor" stroke-width="1" opacity="0.5"/></svg>
+              </div>
+              <h3 class="card__title">{{ 'Modern marina'|t }}</h3>
+              <p class="card__body">{{ 'A modern, fixed-pier marina with 68+ slips, a private boat launch, and 90-octane non-ethanol marine gas available at cost for members.'|t }}</p>
+            </div>
+
+            <div class="card">
+              <div class="card__icon">
+                <svg viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M3 18 L3 9 L11 4 L19 9 L19 18 Z" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="8" y="13" width="6" height="5" stroke="currentColor" stroke-width="1.2"/></svg>
+              </div>
+              <h3 class="card__title">{{ 'Manufactured homes'|t }}</h3>
+              <p class="card__body">{{ 'Well-maintained manufactured homes in a range of layouts and sizes — affordable seasonal living right on the water.'|t }}</p>
+            </div>
+
+          </div>
+        {% endif %}
+      </section>
+
+      <hr class="section-divider">
+
+      {# ── Body content from node ──────────────────────── #}
+      {% if page.content['body'] %}
+        <section class="inner-page prose">
+          {{ page.content['body'] }}
+        </section>
+      {% endif %}
+
+      {# ── CTA ────────────────────────────────────────────── #}
+      <div class="cta-band">
+        <h2>{{ 'See it for yourself'|t }}</h2>
+        <p>{{ 'We\'d love to show you around. Get in touch to arrange a visit or ask any questions about community life.'|t }}</p>
+        <div class="cta-band__actions">
+          <a href="/homes-for-sale" class="btn btn--primary">{{ 'View seasonal homes'|t }}</a>
+        </div>
+      </div>
+
+    </div>{# /.container #}
+  </main>
+
+  {{ include('@meadow_lane/partials/site-footer.html.twig') }}
+
+</div>

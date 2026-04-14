@@ -1,0 +1,16 @@
+{#
+/**
+ * @file block--simplenews-subscription-block.html.twig
+ * Meadow Lane Park — Simplenews subscription block wrapper.
+ *
+ * The inline style ensures the dark card renders correctly
+ * regardless of CSS aggregation cache state on the server.
+ */
+#}
+<div{{ attributes }} style="background:#1a2820; border-radius:16px; padding:2.5rem 3rem; margin:2.5rem 0;">
+  <div class="simplenews-signup-heading">
+    <h3 class="simplenews-signup-heading__title" style="font-size:1rem; font-weight:500; color:white; margin-bottom:0.25rem;">{{ 'Get notified of new listings'|t }}</h3>
+    <p class="simplenews-signup-heading__desc" style="font-size:0.875rem; color:rgba(255,255,255,0.6); margin:0 0 1.5rem;">{{ 'Enter your email and we\'ll let you know when a new seasonal home is listed at Meadow Lane Park.'|t }}</p>
+  </div>
+  {{ content }}
+</div>

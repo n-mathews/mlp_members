@@ -1,0 +1,107 @@
+{#
+/**
+ * @file page--about.html.twig
+ * Meadow Lane Park — About Us page.
+ */
+#}
+<div class="site-wrapper">
+
+  {{ include('@meadow_lane/partials/site-header.html.twig') }}
+
+  {# ── Page banner ──────────────────────────────────────── #}
+  <div class="page-banner">
+    <div class="page-banner__inner container">
+      {% if page.breadcrumb %}
+        <nav class="page-banner__breadcrumb" aria-label="{{ 'Breadcrumb'|t }}">
+          {{ page.breadcrumb }}
+        </nav>
+      {% endif %}
+      <span class="section-label" style="color:rgba(255,255,255,0.55);">
+        {{ 'Our community'|t }}
+      </span>
+      <h1 class="page-banner__title">{{ 'About Meadow Lane Park'|t }}</h1>
+    </div>
+  </div>
+
+  {% if page.highlighted %}
+    <div class="layout-highlighted container">{{ page.highlighted }}</div>
+  {% endif %}
+
+  <main id="main-content" class="layout-main" role="main" tabindex="-1">
+    <div class="container">
+
+      {# ── Intro ──────────────────────────────────────────── #}
+      <section class="inner-page" aria-label="{{ 'About us introduction'|t }}">
+        <p class="inner-page__lead">
+          {{ 'Meadow Lane Park is a seasonal, resident-owned community located in the heart of the 1000 Islands region of New York State. Incorporated in 2018, when you buy a home here you become a co-owner of the land beneath it — a real stake in the community itself.'|t }}
+        </p>
+
+        <div class="inner-two-col">
+          <div class="inner-two-col__text">
+            <span class="section-label">{{ 'What makes us different'|t }}</span>
+            <h2>{{ 'Owned by the people who live here'|t }}</h2>
+            <p>{{ 'Unlike traditional land-lease parks, Meadow Lane Park is structured as a resident-owned community. Residents collectively own the land, which means there\'s no landlord, no arbitrary rent increases, and no risk of the land being sold out from under you.'|t }}</p>
+            <p>{{ 'Every homeowner has a vote in how the community is governed, with annual meetings giving every owner a direct voice.'|t }}</p>
+            <a href="/ownership" class="btn btn--outline">{{ 'How ownership works'|t }}</a>
+          </div>
+          <div class="inner-two-col__image">
+            {% if page.content['field_about_image'] %}
+              {{ page.content['field_about_image'] }}
+            {% else %}
+              <img
+                src="{{ base_path ~ directory }}/images/about-community.jpg"
+                alt="{{ 'Meadow Lane Park community grounds and entrance'|t }}"
+                width="1200" height="800"
+                loading="lazy"
+                style="width:100%; height:100%; object-fit:cover; border-radius:var(--radius-xl); display:block;"
+              />
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="inner-two-col inner-two-col--reversed">
+          <div class="inner-two-col__text">
+            <span class="section-label">{{ 'Our history'|t }}</span>
+            <h2>{{ 'Incorporated 2018'|t }}</h2>
+            <p>{{ 'Meadow Lane Park has deep roots in the 1000 Islands region. In 2018, the community took a defining step — incorporating as a resident-owned organisation and placing long-term control firmly in the hands of the people who live here.'|t }}</p>
+            <p>{{ 'As a seasonal community, Meadow Lane Park comes alive each spring and summer, offering a relaxed pace of life on the St. Lawrence River with all the natural beauty the region is known for.'|t }}</p>
+          </div>
+          <div class="inner-two-col__image">
+            {% if page.content['field_history_image'] %}
+              {{ page.content['field_history_image'] }}
+            {% else %}
+              <img
+                src="{{ base_path ~ directory }}/images/about-aerial.jpg"
+                alt="{{ 'Aerial view of Meadow Lane Park marina and community'|t }}"
+                width="1400" height="787"
+                loading="lazy"
+                style="width:100%; height:100%; object-fit:cover; object-position:center 40%; border-radius:var(--radius-xl); display:block;"
+              />
+            {% endif %}
+          </div>
+        </div>
+      </section>
+
+      {# ── Drupal body content (rich text from the node) ─── #}
+      {% if page.content %}
+        <hr class="section-divider">
+        <section class="inner-page prose">
+          {{ page.content }}
+        </section>
+      {% endif %}
+
+      {# ── CTA ────────────────────────────────────────────── #}
+      <div class="cta-band">
+        <h2>{{ 'Interested in a seasonal home on the river?'|t }}</h2>
+        <p>{{ 'Browse our available manufactured homes for sale at Meadow Lane Park.'|t }}</p>
+        <div class="cta-band__actions">
+          <a href="/homes-for-sale" class="btn btn--primary">{{ 'View seasonal homes'|t }}</a>
+        </div>
+      </div>
+
+    </div>{# /.container #}
+  </main>
+
+  {{ include('@meadow_lane/partials/site-footer.html.twig') }}
+
+</div>

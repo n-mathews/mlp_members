@@ -1,0 +1,182 @@
+/**
+ * footer.css — Meadow Lane Park
+ */
+
+.site-footer {
+  background: var(--clr-text-dark);
+  padding: var(--space-12) var(--container-pad) var(--space-8);
+}
+
+.footer__top {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: var(--space-10);
+  padding-bottom: var(--space-10);
+  margin-bottom: var(--space-8);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.footer__brand-name {
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  font-weight: 500;
+  color: white;
+  margin-bottom: var(--space-3);
+}
+
+.footer__brand-desc {
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.4);
+  line-height: var(--leading-normal);
+}
+
+.footer__col-heading {
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  font-weight: 500;
+  margin-bottom: var(--space-4);
+}
+
+.footer__col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer__col li {
+  margin-bottom: var(--space-2);
+}
+
+.footer__col a {
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.footer__col a:hover {
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
+}
+
+.footer__bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--text-xs);
+  color: rgba(255,255,255,0.3);
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+@media (max-width: 900px) {
+  .footer__top { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 560px) {
+  .footer__top { grid-template-columns: 1fr; }
+  .footer__bottom { flex-direction: column; align-items: flex-start; }
+}
+
+/* ── Footer menu blocks (Drupal-rendered <ul>) ───────── */
+/*
+ * When a menu block is placed in a footer region, Drupal renders
+ * a .block > .menu wrapper. These rules ensure the <ul> and <li>
+ * elements match the footer column design without needing extra
+ * wrapper classes.
+ */
+.site-footer .footer__col .block { margin: 0; }
+
+.site-footer .footer__col ul,
+.site-footer .footer__col .menu {
+  list-style: none;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.site-footer .footer__col li,
+.site-footer .footer__col .menu-item {
+  list-style: none;
+  list-style-type: none;
+  margin-bottom: var(--space-2);
+}
+
+.site-footer .footer__col a {
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.site-footer .footer__col a:hover {
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
+}
+
+.site-footer .footer__col .menu-item--active-trail > a,
+.site-footer .footer__col .is-active {
+  color: rgba(255,255,255,0.85);
+}
+
+/* ── Admin hint (visible only to logged-in admins) ───── */
+.footer__admin-hint {
+  font-size: var(--text-xs);
+  margin: 0;
+}
+
+.footer__admin-hint a {
+  color: rgba(255,200,100,0.7) !important;
+  border-bottom: 1px dashed rgba(255,200,100,0.4);
+}
+
+.footer__admin-hint a:hover {
+  color: rgba(255,200,100,1) !important;
+}
+
+/* ── Account menu in footer Members column ───────────── */
+.footer__account-menu {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.footer__account-menu ul,
+.footer__account-menu .menu {
+  list-style: none;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footer__account-menu li,
+.footer__account-menu .menu-item {
+  list-style: none;
+  margin-bottom: var(--space-2);
+}
+
+.footer__account-menu a {
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.footer__account-menu a:hover {
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
+}
+
+/* Suppress any block title the account menu block might render */
+.footer__account-menu .block-title { display: none; }
+
+/* ── Suppress all block titles inside footer columns ──── */
+/* Drupal renders both our .footer__col-heading h2 AND the block's own
+   h2.block-title — hide the block title to avoid doubling up */
+.site-footer .footer__col .block-title,
+.site-footer .footer__col .block > h2,
+.site-footer .footer__col > .block > h2 {
+  display: none;
+}

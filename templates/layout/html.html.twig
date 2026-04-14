@@ -1,0 +1,41 @@
+{#
+/**
+ * @file html.html.twig
+ * Meadow Lane Park — outer HTML document.
+ *
+ * Variables:
+ *   - logged_in: TRUE if current user is logged in.
+ *   - root_path: Root path of the current page (e.g. 'node').
+ *   - node_type: Bundle of the current node (if on a node page).
+ *   - head_title: List of parts that make up the page title.
+ *   - page_top: Initial page content before main region.
+ *   - page: Page-level content regions.
+ *   - page_bottom: Final page content after main region.
+ *   - db_offline: TRUE when site is in maintenance mode.
+ *   - placeholder_token: Token for placeholder replacement.
+ */
+#}
+<!DOCTYPE html>
+<html{{ html_attributes }}>
+  <head>
+    <head-placeholder token="{{ placeholder_token }}">
+    <title>{{ head_title|safe_join(' | ') }}</title>
+    <css-placeholder token="{{ placeholder_token }}">
+    <js-placeholder token="{{ placeholder_token }}">
+  </head>
+  <body{{ attributes }}>
+    {#
+      Accessibility: Skip-to-content link.
+      The .sr-only class hides it visually; it becomes visible on focus.
+    #}
+    <a class="skip-link sr-only" href="#main-content">
+      {{ 'Skip to main content'|t }}
+    </a>
+
+    {{ page_top }}
+    {{ page }}
+    {{ page_bottom }}
+
+    <js-bottom-placeholder token="{{ placeholder_token }}">
+  </body>
+</html>

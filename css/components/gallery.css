@@ -1,0 +1,221 @@
+/**
+ * gallery.css — Meadow Lane Park
+ * Photo gallery for home listing detail pages.
+ */
+
+/* ── Gallery grid ────────────────────────────────────── */
+.listing-gallery {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 280px 180px;
+  gap: var(--space-2);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: var(--space-8);
+  cursor: pointer;
+  background: var(--clr-stone);
+}
+
+/* First image — large hero slot */
+.listing-gallery__item {
+  overflow: hidden;
+  background: var(--clr-stone);
+  position: relative;
+}
+
+.listing-gallery__item:first-child {
+  grid-row: 1 / 3;
+}
+
+/* Images beyond 3 get hidden in the grid */
+.listing-gallery__item:nth-child(n+4) {
+  display: none;
+}
+
+/* "View all" overlay on the last visible thumbnail */
+.listing-gallery__item:nth-child(3) .listing-gallery__overlay {
+  display: flex;
+}
+
+.listing-gallery__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+  display: block;
+}
+
+.listing-gallery__item:hover .listing-gallery__img {
+  transform: scale(1.04);
+}
+
+.listing-gallery__overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(28,45,38,0.55);
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+
+/* Single image — full width */
+.listing-gallery--single {
+  grid-template-columns: 1fr;
+  grid-template-rows: 400px;
+}
+
+.listing-gallery--single .listing-gallery__item:first-child {
+  grid-row: 1;
+}
+
+/* ── Lightbox overlay ────────────────────────────────── */
+.mlp-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,18,14,0.95);
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.mlp-lightbox.is-open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.mlp-lightbox__inner {
+  position: relative;
+  max-width: min(90vw, 1100px);
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mlp-lightbox__img {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  display: block;
+}
+
+.mlp-lightbox__close {
+  position: fixed;
+  top: var(--space-5);
+  right: var(--space-5);
+  width: 44px;
+  height: 44px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 50%;
+  color: white;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  line-height: 1;
+}
+
+.mlp-lightbox__close:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.mlp-lightbox__prev,
+.mlp-lightbox__next {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 50%;
+  color: white;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.mlp-lightbox__prev { left: var(--space-5); }
+.mlp-lightbox__next { right: var(--space-5); }
+
+.mlp-lightbox__prev:hover,
+.mlp-lightbox__next:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* Hide nav arrows when only one image */
+.mlp-lightbox--single .mlp-lightbox__prev,
+.mlp-lightbox--single .mlp-lightbox__next {
+  display: none;
+}
+
+.mlp-lightbox__counter {
+  position: fixed;
+  bottom: var(--space-6);
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.55);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  letter-spacing: 0.04em;
+}
+
+/* ── Thumbnail strip ─────────────────────────────────── */
+.mlp-lightbox__thumbs {
+  position: fixed;
+  bottom: var(--space-10);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: var(--space-2);
+  max-width: 90vw;
+  overflow-x: auto;
+  padding: var(--space-1);
+}
+
+.mlp-lightbox__thumb {
+  width: 56px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 4px;
+  opacity: 0.5;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: opacity var(--transition-fast), border-color var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.mlp-lightbox__thumb.is-active,
+.mlp-lightbox__thumb:hover {
+  opacity: 1;
+  border-color: var(--clr-teal-mid);
+}
+
+/* ── Responsive ──────────────────────────────────────── */
+@media (max-width: 767px) {
+  .listing-gallery {
+    grid-template-columns: 1fr;
+    grid-template-rows: 260px;
+  }
+  .listing-gallery__item:first-child { grid-row: 1; }
+  .listing-gallery__item:nth-child(n+2) { display: none; }
+  .mlp-lightbox__prev { left: var(--space-2); }
+  .mlp-lightbox__next { right: var(--space-2); }
+}

@@ -1,0 +1,140 @@
+<?php
+
+/**
+ * @file
+ * Install functions for the Meadow Lane Park theme.
+ *
+ * Run after enabling the theme:
+ *
+ *   drush php:eval "meadow_lane_create_default_content();"
+ *
+ * This creates:
+ *   - Default pages (About, Amenities, Location, etc.)
+ *   - All menu links for Main navigation and three footer menus
+ */
+
+/**
+ * Creates default pages and all menu links for Meadow Lane Park.
+ */
+function meadow_lane_create_default_content(): void {
+  _meadow_lane_create_pages();
+  _meadow_lane_create_menu_links();
+  \Drupal::messenger()->addStatus(t('Meadow Lane Park: default content and menus created.'));
+}
+
+/**
+ * Creates default Basic page nodes with path aliases.
+ */
+function _meadow_lane_create_pages(): void {
+  $pages = [
+    [
+      'title' => 'About Us',
+      'alias' => '/about',
+      'body'  => '<p>Meadow Lane Park is a seasonal, resident-owned community incorporated in 2018, located in the heart of the 1000 Islands region of New York State.</p>',
+    ],
+    [
+      'title' => 'Amenities',
+      'alias' => '/amenities',
+      'body'  => '<p>Meadow Lane Park offers a range of amenities for members to enjoy throughout the season on the St. Lawrence River.</p>',
+    ],
+    [
+      'title' => 'Location',
+      'alias' => '/location',
+      'body'  => '<p>Meadow Lane Park is located minutes from the Thousand Islands Bridge and the village of Alexandria Bay, NY.</p>',
+    ],
+    [
+      'title' => 'Ownership Explained',
+      'alias' => '/ownership',
+      'body'  => '<p>When you purchase a home at Meadow Lane Park, you become a co-owner of the community land — incorporated in 2018. There is no landlord and no land lease.</p>',
+    ],
+    [
+      'title' => 'Documents & Forms',
+      'alias' => '/documents',
+      'body'  => '<p>Member documents and forms are available here. Please log in to access the full library.</p>',
+    ],
+    [
+      'title' => 'Member Login',
+      'alias' => '/member',
+      'body'  => '<p>The member portal is coming soon.</p>',
+    ],
+  ];
+
+  $alias_manager = \Drupal::service('path_alias.manager');
+  $alias_storage = \Drupal::entityTypeManager()->getStorage('path_alias');
+  $node_storage  = \Drupal::entityTypeManager()->getStorage('node');
+
+  foreach ($pages as $page) {
+    $existing = $alias_manager->getPathByAlias($page['alias']);
+    if ($existing !== $page['alias']) {
+      \Drupal::logger('meadow_lane')->info('Skipping @alias — already exists.', ['@alias' => $page['alias']]);
+      continue;
+    }
+
+    $node = $node_storage->create([
+      'type'   => 'page',
+      'title'  => $page['title'],
+      'status' => 1,
+      'body'   => ['value' => $page['body'], 'format' => 'basic_html'],
+    ]);
+    $node->save();
+
+    $alias_storage->create([
+      'path'  => '/node/' . $node->id(),
+      'alias' => $page['alias'],
+    ])->save();
+
+    \Drupal::logger('meadow_lane')->info('Created "@title" at @alias.', [
+      '@title' => $page['title'],
+      '@alias' => $page['alias'],
+    ]);
+  }
+}
+
+/**
+ * Creates all menu links for main navigation and footer menus.
+ */
+function _meadow_lane_create_menu_links(): void {
+  $menu_link_storage = \Drupal::entityTypeManager()->getStorage('menu_link_content');
+
+  $links = [
+    // Main navigation
+    ['title' => 'About Us',            'menu' => 'main',                  'uri' => 'internal:/about',          'weight' => 1],
+    ['title' => 'Amenities',           'menu' => 'main',                  'uri' => 'internal:/amenities',      'weight' => 2],
+    ['title' => 'Seasonal Homes',      'menu' => 'main',                  'uri' => 'internal:/homes-for-sale', 'weight' => 3],
+    ['title' => 'Location',            'menu' => 'main',                  'uri' => 'internal:/location',       'weight' => 4],
+    // Footer — Community
+    ['title' => 'About Us',            'menu' => 'footer-community',      'uri' => 'internal:/about',          'weight' => 1],
+    ['title' => 'Amenities',           'menu' => 'footer-community',      'uri' => 'internal:/amenities',      'weight' => 2],
+    ['title' => 'Location',            'menu' => 'footer-community',      'uri' => 'internal:/location',       'weight' => 3],
+    // Footer — Seasonal Homes
+    ['title' => 'Homes for Sale',      'menu' => 'footer-seasonal-homes', 'uri' => 'internal:/homes-for-sale', 'weight' => 1],
+    ['title' => 'Ownership Explained', 'menu' => 'footer-seasonal-homes', 'uri' => 'internal:/ownership',      'weight' => 2],
+    // Footer — Members
+    ['title' => 'Member Login',        'menu' => 'footer-members',        'uri' => 'internal:/member',         'weight' => 1],
+    ['title' => 'Documents & Forms',   'menu' => 'footer-members',        'uri' => 'internal:/documents',      'weight' => 2],
+  ];
+
+  foreach ($links as $link) {
+    $existing = $menu_link_storage->loadByProperties([
+      'menu_name' => $link['menu'],
+      'link__uri' => $link['uri'],
+    ]);
+    if (!empty($existing)) {
+      continue;
+    }
+
+    $menu_link_storage->create([
+      'title'     => $link['title'],
+      'menu_name' => $link['menu'],
+      'link'      => ['uri' => $link['uri']],
+      'weight'    => $link['weight'],
+      'enabled'   => 1,
+      'expanded'  => FALSE,
+    ])->save();
+
+    \Drupal::logger('meadow_lane')->info('Created menu link "@title" in @menu.', [
+      '@title' => $link['title'],
+      '@menu'  => $link['menu'],
+    ]);
+  }
+}

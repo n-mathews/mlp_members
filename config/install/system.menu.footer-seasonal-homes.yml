@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {}
+id: footer-seasonal-homes
+label: 'Footer — Seasonal Homes'
+description: 'Seasonal homes links shown in the second footer column.'
+locked: false

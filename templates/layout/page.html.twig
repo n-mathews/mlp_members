@@ -1,0 +1,47 @@
+{#
+/**
+ * @file page.html.twig
+ * Meadow Lane Park — default page layout.
+ *
+ * Variables (selected):
+ *   - is_front: TRUE on the front page.
+ *   - show_member_login, hero_tagline, hero_subtext: Theme settings.
+ *   - footer_tagline, social_facebook, contact_*: Theme settings.
+ *   - page.*: All Drupal region variables.
+ */
+#}
+<div class="site-wrapper">
+
+  {{ include('@meadow_lane/partials/site-header.html.twig') }}
+
+  {% if page.highlighted %}
+    <div class="layout-highlighted" role="complementary">
+      {{ page.highlighted }}
+    </div>
+  {% endif %}
+
+  {% if page.breadcrumb %}
+    <div class="layout-breadcrumb container">
+      {{ page.breadcrumb }}
+    </div>
+  {% endif %}
+
+  <main id="main-content" class="layout-main" role="main" tabindex="-1">
+
+    {% if page.content_top %}
+      <div class="layout-content-top">{{ page.content_top }}</div>
+    {% endif %}
+
+    <div class="layout-content container">
+      {{ page.content }}
+    </div>
+
+    {% if page.content_bottom %}
+      <div class="layout-content-bottom">{{ page.content_bottom }}</div>
+    {% endif %}
+
+  </main>
+
+  {{ include('@meadow_lane/partials/site-footer.html.twig') }}
+
+</div>{# /.site-wrapper #}

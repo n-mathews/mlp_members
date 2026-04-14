@@ -1,0 +1,104 @@
+/**
+ * layout.css — Meadow Lane Park
+ * Page wrapper, site shell, regions, and section spacing.
+ */
+
+/* ── Site wrapper — full viewport width ──────────────── */
+.site-wrapper {
+  width: 100%;
+  background: var(--clr-cream);
+}
+
+/* Header nav centred within full-width header */
+.layout-header .site-nav {
+  max-width: var(--container-max);
+  margin: 0 auto;
+}
+
+/* ── Container ───────────────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding-left: var(--container-pad);
+  padding-right: var(--container-pad);
+}
+
+/* ── Section spacing ─────────────────────────────────── */
+.section {
+  padding-top: var(--section-gap);
+  padding-bottom: var(--section-gap);
+}
+
+.section--flush-top    { padding-top: 0; }
+.section--flush-bottom { padding-bottom: 0; }
+.section--compact      { padding-top: var(--space-12); padding-bottom: var(--space-12); }
+
+/* ── Page regions ────────────────────────────────────── */
+.layout-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-nav);
+  background: var(--clr-cream);
+  border-bottom: 1px solid rgba(74, 124, 111, 0.15);
+}
+
+.layout-hero { position: relative; }
+
+.layout-main {
+  min-height: 60vh;
+}
+
+.layout-content {
+  padding: var(--space-12) var(--container-pad);
+}
+
+/* ── Two-column layout ───────────────────────────────── */
+.layout-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-16);
+  align-items: center;
+}
+
+.layout-two-col--sidebar {
+  grid-template-columns: 2fr 1fr;
+}
+
+/* ── Three-column grid ───────────────────────────────── */
+.layout-three-col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+}
+
+/* ── Four-column grid ────────────────────────────────── */
+.layout-four-col {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-5);
+}
+
+/* ── Responsive overrides ────────────────────────────── */
+@media (max-width: 1023px) {
+  :root {
+    --container-pad: var(--space-8);
+  }
+
+  .layout-three-col { grid-template-columns: repeat(2, 1fr); }
+  .layout-four-col  { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --container-pad: var(--space-5);
+    --section-gap:   var(--space-12);
+  }
+
+  .layout-two-col,
+  .layout-two-col--sidebar,
+  .layout-three-col,
+  .layout-four-col {
+    grid-template-columns: 1fr;
+  }
+}

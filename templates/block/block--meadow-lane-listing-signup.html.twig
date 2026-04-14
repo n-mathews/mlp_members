@@ -1,0 +1,44 @@
+{#
+/**
+ * @file block--meadow-lane-listing-signup.html.twig
+ * Meadow Lane Park — "Notify me of new listings" signup wrapper.
+ *
+ * This block is now a styled container. Place the Simplenews
+ * subscription block inside it via Structure → Block layout,
+ * restricted to /homes-for-sale.
+ *
+ * Simplenews setup:
+ *   1. Install: composer require drupal/simplenews
+ *              drush en simplenews
+ *   2. Create a newsletter: /admin/config/services/simplenews/add
+ *      e.g. "New Listing Alerts"
+ *   3. Place the "Simplenews subscription" block in the Content
+ *      region, restricted to /homes-for-sale.
+ *   4. Configure the block to subscribe to "New Listing Alerts" only.
+ *   5. Set up a Simplenews newsletter issue to send when a new
+ *      Home Listing node is published (use Rules or the
+ *      Simplenews Scheduler module).
+ */
+#}
+<div class="listing-signup">
+  <div class="listing-signup__inner">
+
+    <div class="listing-signup__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+        <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+        <path d="M22 6L12 13L2 6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <div class="listing-signup__text">
+      <h3 class="listing-signup__heading">{{ 'Get notified of new listings'|t }}</h3>
+      <p class="listing-signup__desc">{{ 'Enter your email and we\'ll let you know when a new seasonal home is listed at Meadow Lane Park.'|t }}</p>
+    </div>
+
+    <div class="listing-signup__form-area">
+      {# Simplenews subscription block content renders here #}
+      {{ content }}
+    </div>
+
+  </div>
+</div>

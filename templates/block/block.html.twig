@@ -1,0 +1,25 @@
+{#
+/**
+ * @file block.html.twig
+ * Meadow Lane Park — generic block wrapper.
+ *
+ * Available variables:
+ *   - plugin_id: The ID of the block implementation.
+ *   - label: The configured label of the block (if visible).
+ *   - configuration: A list of block configuration values.
+ *   - content: The content of this block.
+ *   - attributes: HTML attributes for the containing element.
+ *   - title_attributes: HTML attributes for the title element.
+ *   - content_attributes: HTML attributes for the content element.
+ */
+#}
+{% if content %}
+  <div{{ attributes.addClass('block', 'block--' ~ plugin_id|clean_class) }}>
+    {% if label %}
+      <h2{{ title_attributes.addClass('block__title') }}>{{ label }}</h2>
+    {% endif %}
+    <div{{ content_attributes.addClass('block__content') }}>
+      {{ content }}
+    </div>
+  </div>
+{% endif %}
