@@ -66,11 +66,21 @@ class MemberPortalController extends ControllerBase {
       }
     }
 
+    // Log for debugging.
+    \Drupal::logger('mlp_members')->notice(
+      'Documents page: drive_enabled=@enabled, folders=@count, sections=@sections',
+      [
+        '@enabled'  => var_export($drive_enabled, TRUE),
+        '@count'    => count($folders),
+        '@sections' => count($sections),
+      ]
+    );
+
     return [
       '#theme'         => 'mlp_member_documents',
       '#sections'      => $sections,
       '#drive_enabled' => $drive_enabled,
-      '#cache'         => ['max-age' => 900],
+      '#cache'         => ['max-age' => 0],
     ];
   }
 
