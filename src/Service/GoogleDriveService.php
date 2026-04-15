@@ -120,10 +120,12 @@ class GoogleDriveService {
       $response = $this->httpClient->get(self::DRIVE_URL, [
         'headers' => ['Authorization' => 'Bearer ' . $token],
         'query'   => [
-          'q'        => "'{$folder_id}' in parents and trashed = false",
-          'fields'   => 'files(id,name,mimeType,webViewLink,size,modifiedTime)',
-          'orderBy'  => 'name',
-          'pageSize' => 100,
+          'q'                       => "'{$folder_id}' in parents and trashed = false",
+          'fields'                  => 'files(id,name,mimeType,webViewLink,size,modifiedTime)',
+          'orderBy'                 => 'name',
+          'pageSize'                => 100,
+          'supportsAllDrives'       => 'true',
+          'includeItemsFromAllDrives' => 'true',
         ],
       ]);
 
