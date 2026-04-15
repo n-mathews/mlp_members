@@ -30,9 +30,11 @@ function mlp_members_theme(): array {
     ],
     'mlp_events' => [
       'variables' => [
-        'events' => [],
+        'events'  => [],
+        'can_add' => FALSE,
       ],
     ],
+    // Note: can_edit and can_delete are per-event flags inside the events array.
     'mlp_announcements' => [
       'variables' => [
         'items'       => [],
@@ -117,6 +119,24 @@ function mlp_members_node_update(\Drupal\node\NodeInterface $node): void {
   mlp_members_node_redirect($node);
 }
 
+
+/**
+ * Implements hook_node_delete().
+ */
+function mlp_members_node_delete(\Drupal\node\NodeInterface $node): void {
+  // For delete, we cannot use node->id() as destination since it will be gone.
+  // Redirect based on type only.
+  $destinations = [
+    'announcement' => '/announcements',
+    'event'        => '/events',
+  ];
+  $type = $node->bundle();
+  if (isset($destinations[$type])) {
+    $response = new \Symfony\Component\HttpFoundation\RedirectResponse($destinations[$type]);
+    $response->send();
+    exit;
+  }
+}
 /**
  * Redirect after saving member content types.
  */

@@ -240,13 +240,32 @@ class MemberPortalController extends ControllerBase {
    * Events calendar page — FullCalendar + upcoming list.
    */
   public function events(): array {
+    $account        = \Drupal::currentUser();
+    $can_add        = $account->hasPermission('create event content');
+    $can_edit_any   = $account->hasPermission('edit any event content');
+    $can_delete_any = $account->hasPermission('delete any event content');
+    $can_edit_own   = $account->hasPermission('edit own event content');
+    $can_delete_own = $account->hasPermission('delete own event content');
+    $uid            = $account->id();
+
     $upcoming = $this->loadUpcomingEvents(20);
+
+    // Annotate each event with edit/delete permission flags.
+    foreach ($upcoming as &$event) {
+      $is_own = isset($event['uid']) && $event['uid'] == $uid;
+      $event['can_edit']   = $can_edit_any   || ($can_edit_own   && $is_own);
+      $event['can_delete'] = $can_delete_any || ($can_delete_own && $is_own);
+    }
+    unset($event);
+
     return [
-      '#theme'    => 'mlp_events',
-      '#events'   => $upcoming,
-      '#cache'    => [
-        'max-age' => 300,
-        'tags'    => ['node_list:event'],
+      '#theme'   => 'mlp_events',
+      '#events'  => $upcoming,
+      '#can_add' => $can_add,
+      '#cache'   => [
+        'max-age'  => 300,
+        'tags'     => ['node_list:event'],
+        'contexts' => ['user.permissions', 'user'],
       ],
     ];
   }
@@ -436,6 +455,7 @@ class MemberPortalController extends ControllerBase {
           'all_day'  => $all_day,
           'link'     => $link,
           'id'       => $node->id(),
+          'uid'      => $node->getOwnerId(),
         ];
       }
       return $items;
