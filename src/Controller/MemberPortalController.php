@@ -58,10 +58,11 @@ class MemberPortalController extends ControllerBase {
         if (empty($folder['id'])) {
           continue;
         }
-        $files = $this->driveService->getFolderContents($folder['id']);
+        // Check for subfolders — if present, each subfolder becomes a subsection.
+        $subfolders = $this->driveService->getFolderWithSubfolders($folder['id']);
         $sections[] = [
-          'label' => $folder['label'] ?? '',
-          'files' => $files,
+          'label'      => $folder['label'] ?? '',
+          'subfolders' => $subfolders,
         ];
       }
     }

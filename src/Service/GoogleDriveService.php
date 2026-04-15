@@ -35,21 +35,58 @@ class GoogleDriveService {
   ) {}
 
   /**
-   * Returns the files in a given Google Drive folder, cached.
-   *
-   * @param string $folder_id  Google Drive folder ID.
-   * @return array  Array of ['name', 'id', 'mimeType', 'webViewLink', 'size', 'modifiedTime'].
+   * Returns files in a folder, cached.
    */
   public function getFolderContents(string $folder_id): array {
-    $cid = 'mlp_members:drive:' . $folder_id;
+    $cid = 'mlp_members:drive:files:' . $folder_id;
+    $cached = $this->cache->get($cid);
+    if ($cached) {
+      return $cached->data;
+    }
+    $files = $this->fetchFromApi($folder_id, FALSE);
+    $this->cache->set($cid, $files, time() + self::CACHE_TTL);
+    return $files;
+  }
+
+  /**
+   * Returns subfolders in a folder, each with their files.
+   * Used when the top-level folder contains only subfolders.
+   *
+   * @return array  Array of ['name', 'id', 'files' => [...]]
+   */
+  public function getFolderWithSubfolders(string $folder_id): array {
+    $cid = 'mlp_members:drive:tree:' . $folder_id;
     $cached = $this->cache->get($cid);
     if ($cached) {
       return $cached->data;
     }
 
-    $files = $this->fetchFromApi($folder_id);
-    $this->cache->set($cid, $files, time() + self::CACHE_TTL);
-    return $files;
+    // Get everything in the top-level folder.
+    $all = $this->fetchFromApi($folder_id, TRUE);
+
+    $subfolders = array_filter($all, fn($f) => $f['mimeType'] === 'application/vnd.google-apps.folder');
+    $files      = array_filter($all, fn($f) => $f['mimeType'] !== 'application/vnd.google-apps.folder');
+
+    if (!empty($subfolders)) {
+      // Folder contains subfolders — recurse one level.
+      $result = [];
+      foreach ($subfolders as $subfolder) {
+        $result[] = [
+          'name'  => $subfolder['name'],
+          'id'    => $subfolder['id'],
+          'files' => $this->fetchFromApi($subfolder['id'], FALSE),
+        ];
+      }
+      // Sort subfolders by name.
+      usort($result, fn($a, $b) => strcmp($a['name'], $b['name']));
+    }
+    else {
+      // Folder contains files directly — wrap in a single group.
+      $result = [['name' => '', 'id' => $folder_id, 'files' => array_values($files)]];
+    }
+
+    $this->cache->set($cid, $result, time() + self::CACHE_TTL);
+    return $result;
   }
 
   /**
@@ -62,7 +99,7 @@ class GoogleDriveService {
 
   // ── Private ──────────────────────────────────────────────
 
-  private function fetchFromApi(string $folder_id): array {
+  private function fetchFromApi(string $folder_id, bool $include_folders = FALSE): array {
     $config = $this->configFactory->get('mlp_members.settings');
     $key_path = $config->get('service_account_key_path');
 
@@ -105,8 +142,11 @@ class GoogleDriveService {
       }
       $files = $data['files'] ?? [];
 
-      // Filter out subfolders — return files only.
-      return array_values(array_filter($files, fn($f) => $f['mimeType'] !== 'application/vnd.google-apps.folder'));
+      if (!$include_folders) {
+        // Filter out subfolders — return files only.
+        $files = array_values(array_filter($files, fn($f) => $f['mimeType'] !== 'application/vnd.google-apps.folder'));
+      }
+      return array_values($files);
 
     }
     catch (RequestException $e) {
