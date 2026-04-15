@@ -10,6 +10,26 @@
     <a href="/announcements" class="member-announcement-detail__back-link">
       ← {{ 'All announcements'|t }}
     </a>
+    {% if can_edit or can_delete %}
+      <div class="member-announcement-detail__actions">
+        {% if can_edit %}
+          <a href="/node/{{ node_id }}/edit" class="event-card__action event-card__action--edit">
+            <svg viewBox="0 0 16 16" fill="none" width="13" height="13" aria-hidden="true">
+              <path d="M11.5 2.5l2 2L5 13H3v-2L11.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+            </svg>
+            {{ 'Edit'|t }}
+          </a>
+        {% endif %}
+        {% if can_delete %}
+          <a href="/node/{{ node_id }}/delete" class="event-card__action event-card__action--delete">
+            <svg viewBox="0 0 16 16" fill="none" width="13" height="13" aria-hidden="true">
+              <path d="M3 4h10M6 4V3h4v1M5 4v8h6V4H5z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            {{ 'Delete'|t }}
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
   </div>
 
   <article class="member-announcement-detail__article">

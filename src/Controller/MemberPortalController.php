@@ -121,10 +121,17 @@ class MemberPortalController extends ControllerBase {
    * Full announcements listing page — paginated, filterable by category.
    */
   public function announcements(): array {
-    $request    = \Drupal::request();
-    $page       = (int) $request->query->get('page', 0);
-    $active_tid = (int) $request->query->get('category', 0);
-    $limit      = 10;
+    $request        = \Drupal::request();
+    $page           = (int) $request->query->get('page', 0);
+    $active_tid     = (int) $request->query->get('category', 0);
+    $limit          = 10;
+    $account        = \Drupal::currentUser();
+    $can_add        = $account->hasPermission('create announcement content');
+    $can_edit_any   = $account->hasPermission('edit any announcement content');
+    $can_delete_any = $account->hasPermission('delete any announcement content');
+    $can_edit_own   = $account->hasPermission('edit own announcement content');
+    $can_delete_own = $account->hasPermission('delete own announcement content');
+    $uid            = $account->id();
 
     try {
       $node_storage = $this->entityTypeManager()->getStorage('node');
@@ -165,6 +172,7 @@ class MemberPortalController extends ControllerBase {
             $node_cats[] = ['id' => $term->id(), 'name' => $term->getName()];
           }
         }
+        $is_own = $node->getOwnerId() == $uid;
         $items[] = [
           'id'         => $node->id(),
           'title'      => $node->getTitle(),
@@ -173,6 +181,8 @@ class MemberPortalController extends ControllerBase {
           'sticky'     => $node->isSticky(),
           'featured'   => (bool) $this->fieldValue($node, 'field_featured', FALSE),
           'categories' => $node_cats,
+          'can_edit'   => $can_edit_any   || ($can_edit_own   && $is_own),
+          'can_delete' => $can_delete_any || ($can_delete_own && $is_own),
         ];
       }
 
@@ -184,10 +194,11 @@ class MemberPortalController extends ControllerBase {
         '#page'        => $page,
         '#total_pages' => (int) ceil($total / $limit),
         '#total'       => $total,
+        '#can_add'     => $can_add,
         '#cache'       => [
           'max-age'  => 300,
           'tags'     => ['node_list:announcement', 'taxonomy_term_list:announcement_category'],
-          'contexts' => ['url.query_args:page', 'url.query_args:category'],
+          'contexts' => ['url.query_args:page', 'url.query_args:category', 'user.permissions', 'user'],
         ],
       ];
     }
@@ -215,6 +226,13 @@ class MemberPortalController extends ControllerBase {
         }
       }
 
+      $account    = \Drupal::currentUser();
+      $is_own     = $entity->getOwnerId() == $account->id();
+      $can_edit   = $account->hasPermission('edit any announcement content')
+                 || ($account->hasPermission('edit own announcement content') && $is_own);
+      $can_delete = $account->hasPermission('delete any announcement content')
+                 || ($account->hasPermission('delete own announcement content') && $is_own);
+
       return [
         '#theme'      => 'mlp_announcement_detail',
         '#title'      => $entity->getTitle(),
@@ -223,8 +241,12 @@ class MemberPortalController extends ControllerBase {
         '#sticky'     => $entity->isSticky(),
         '#featured'   => (bool) $this->fieldValue($entity, 'field_featured', FALSE),
         '#categories' => $cats,
+        '#can_edit'   => $can_edit,
+        '#can_delete' => $can_delete,
+        '#node_id'    => $entity->id(),
         '#cache'      => [
-          'tags' => ['node:' . $entity->id()],
+          'tags'     => ['node:' . $entity->id()],
+          'contexts' => ['user.permissions', 'user'],
         ],
       ];
     }

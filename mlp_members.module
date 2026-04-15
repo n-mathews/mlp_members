@@ -43,6 +43,7 @@ function mlp_members_theme(): array {
         'page'        => 0,
         'total_pages' => 1,
         'total'       => 0,
+        'can_add'     => FALSE,
       ],
     ],
     'mlp_announcement_detail' => [
@@ -53,6 +54,9 @@ function mlp_members_theme(): array {
         'sticky'     => FALSE,
         'featured'   => FALSE,
         'categories' => [],
+        'can_edit'   => FALSE,
+        'can_delete' => FALSE,
+        'node_id'    => NULL,
       ],
     ],
   ];
