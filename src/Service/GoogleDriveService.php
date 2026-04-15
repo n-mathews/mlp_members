@@ -49,10 +49,9 @@ class GoogleDriveService {
   }
 
   /**
-   * Returns subfolders in a folder, each with their files.
-   * Used when the top-level folder contains only subfolders.
-   *
-   * @return array  Array of ['name', 'id', 'files' => [...]]
+   * Returns a recursive tree for a folder (up to 2 levels deep).
+   * Each node: ['name', 'id', 'files' => [...], 'children' => [...]]
+   * Sorted alphabetically at every level.
    */
   public function getFolderWithSubfolders(string $folder_id): array {
     $cid = 'mlp_members:drive:tree:' . $folder_id;
@@ -61,32 +60,39 @@ class GoogleDriveService {
       return $cached->data;
     }
 
-    // Get everything in the top-level folder.
-    $all = $this->fetchFromApi($folder_id, TRUE);
-
-    $subfolders = array_filter($all, fn($f) => $f['mimeType'] === 'application/vnd.google-apps.folder');
-    $files      = array_filter($all, fn($f) => $f['mimeType'] !== 'application/vnd.google-apps.folder');
-
-    if (!empty($subfolders)) {
-      // Folder contains subfolders — recurse one level.
-      $result = [];
-      foreach ($subfolders as $subfolder) {
-        $result[] = [
-          'name'  => $subfolder['name'],
-          'id'    => $subfolder['id'],
-          'files' => $this->fetchFromApi($subfolder['id'], FALSE),
-        ];
-      }
-      // Sort subfolders by name.
-      usort($result, fn($a, $b) => strcmp($a['name'], $b['name']));
-    }
-    else {
-      // Folder contains files directly — wrap in a single group.
-      $result = [['name' => '', 'id' => $folder_id, 'files' => array_values($files)]];
-    }
+    $result = $this->buildTree($folder_id, 0, 2);
 
     $this->cache->set($cid, $result, time() + self::CACHE_TTL);
     return $result;
+  }
+
+  /**
+   * Recursively builds a folder tree up to $max_depth levels.
+   */
+  private function buildTree(string $folder_id, int $depth, int $max_depth): array {
+    $all = $this->fetchFromApi($folder_id, TRUE);
+
+    $subfolders = array_values(array_filter($all, fn($f) => $f['mimeType'] === 'application/vnd.google-apps.folder'));
+    $files      = array_values(array_filter($all, fn($f) => $f['mimeType'] !== 'application/vnd.google-apps.folder'));
+
+    // Sort both alphabetically.
+    usort($subfolders, fn($a, $b) => strcmp($a['name'], $b['name']));
+    usort($files,      fn($a, $b) => strcmp($a['name'], $b['name']));
+
+    $children = [];
+    if ($depth < $max_depth && !empty($subfolders)) {
+      foreach ($subfolders as $subfolder) {
+        $children[] = array_merge(
+          ['name' => $subfolder['name'], 'id' => $subfolder['id']],
+          $this->buildTree($subfolder['id'], $depth + 1, $max_depth)
+        );
+      }
+    }
+
+    return [
+      'files'    => $files,
+      'children' => $children,
+    ];
   }
 
   /**
