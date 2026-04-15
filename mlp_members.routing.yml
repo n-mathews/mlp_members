@@ -70,3 +70,19 @@ mlp_members.events:
     _title: 'Community events'
   requirements:
     _user_is_logged_in: 'TRUE'
+
+mlp_members.history:
+  path: '/history'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::history'
+    _title: 'Community History'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+mlp_members.history_submit:
+  path: '/history/submit'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::historySubmit'
+    _title: 'Submit a Document'
+  requirements:
+    _user_is_logged_in: 'TRUE'

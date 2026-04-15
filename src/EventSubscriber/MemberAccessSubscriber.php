@@ -31,7 +31,7 @@ class MemberAccessSubscriber implements EventSubscriberInterface {
 
     $path = $event->getRequest()->getPathInfo();
 
-    $protected = ['/member', '/announcements', '/events'];
+    $protected = ['/member', '/announcements', '/events', '/history'];
     foreach ($protected as $prefix) {
       if ($path === $prefix || str_starts_with($path, $prefix . '/')) {
         $destination = urlencode($path);

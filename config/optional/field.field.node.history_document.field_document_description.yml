@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_document_description
+    - node.type.history_document
+  enforced:
+    module:
+      - mlp_members
+id: node.history_document.field_document_description
+field_name: field_document_description
+entity_type: node
+bundle: history_document
+label: 'Description'
+description: 'Optional description or context for this document.'
+required: false
+translatable: true
+default_value: []
+settings: {}
+field_type: text_long

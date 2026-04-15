@@ -34,6 +34,19 @@ function mlp_members_theme(): array {
         'can_add' => FALSE,
       ],
     ],
+    'mlp_history' => [
+      'variables' => [
+        'photos_url' => '',
+        'join_url'   => '',
+        'documents'  => [],
+        'can_manage' => FALSE,
+      ],
+    ],
+    'mlp_history_submit' => [
+      'variables' => [
+        'form' => NULL,
+      ],
+    ],
     // Note: can_edit and can_delete are per-event flags inside the events array.
     'mlp_announcements' => [
       'variables' => [
@@ -114,6 +127,7 @@ function mlp_members_user_login($account): void {
  */
 function mlp_members_node_insert(\Drupal\node\NodeInterface $node): void {
   mlp_members_node_redirect($node);
+  mlp_members_node_insert_newsletter($node);
 }
 
 /**
@@ -131,8 +145,9 @@ function mlp_members_node_delete(\Drupal\node\NodeInterface $node): void {
   // For delete, we cannot use node->id() as destination since it will be gone.
   // Redirect based on type only.
   $destinations = [
-    'announcement' => '/announcements',
-    'event'        => '/events',
+    'announcement'    => '/announcements',
+    'event'           => '/events',
+    'history_document' => '/history',
   ];
   $type = $node->bundle();
   if (isset($destinations[$type])) {
@@ -146,8 +161,9 @@ function mlp_members_node_delete(\Drupal\node\NodeInterface $node): void {
  */
 function mlp_members_node_redirect(\Drupal\node\NodeInterface $node): void {
   $destinations = [
-    'announcement' => '/announcements/' . $node->id(),
-    'event'        => '/events',
+    'announcement'    => '/announcements/' . $node->id(),
+    'event'           => '/events',
+    'history_document' => '/history',
   ];
   if (isset($destinations[$node->bundle()])) {
     $response = new \Symfony\Component\HttpFoundation\RedirectResponse($destinations[$node->bundle()]);
@@ -156,4 +172,100 @@ function mlp_members_node_redirect(\Drupal\node\NodeInterface $node): void {
   }
 }
 
+/**
+ * Implements hook_user_insert().
+ * Auto-subscribe new members to the announcements newsletter.
+ */
+function mlp_members_user_insert(\Drupal\user\UserInterface $account): void {
+  if (!\Drupal::moduleHandler()->moduleExists('simplenews')) {
+    return;
+  }
+  try {
+    $newsletter_id = 'announcements';
+    $newsletter = \Drupal::entityTypeManager()
+      ->getStorage('simplenews_newsletter')
+      ->load($newsletter_id);
+    if (!$newsletter) {
+      return;
+    }
+    $subscriber = \Drupal::service('simplenews.subscription_manager')
+      ->subscribe($account->getEmail(), $newsletter_id, FALSE, 'mlp_auto');
+  }
+  catch (\Exception $e) {
+    \Drupal::logger('mlp_members')->error(
+      'Failed to auto-subscribe user @email to newsletter: @message',
+      ['@email' => $account->getEmail(), '@message' => $e->getMessage()]
+    );
+  }
+}
+
+/**
+ * Implements hook_node_insert() — also triggers newsletter for announcements.
+ * Note: this supplements the existing node_insert/redirect logic.
+ */
+function mlp_members_node_presave(\Drupal\node\NodeInterface $node): void {
+  if ($node->bundle() !== 'announcement') {
+    return;
+  }
+  if (!\Drupal::moduleHandler()->moduleExists('simplenews')) {
+    return;
+  }
+  // Only send when transitioning from unpublished to published.
+  $is_new       = $node->isNew();
+  $was_published = !$is_new && !$node->original->isPublished();
+  $now_published = $node->isPublished();
+
+  if (!$now_published || (!$is_new && !$was_published)) {
+    return;
+  }
+
+  // Mark the node so we send after save (we need the full entity saved first).
+  $node->_mlp_send_newsletter = TRUE;
+}
+
+/**
+ * Send newsletter after a new announcement is published.
+ */
+function mlp_members_node_insert_newsletter(\Drupal\node\NodeInterface $node): void {
+  if (empty($node->_mlp_send_newsletter)) {
+    return;
+  }
+  if (!\Drupal::moduleHandler()->moduleExists('simplenews')) {
+    return;
+  }
+  try {
+    $newsletter = \Drupal::entityTypeManager()
+      ->getStorage('simplenews_newsletter')
+      ->load('announcements');
+    if (!$newsletter) {
+      return;
+    }
+
+    $body = '';
+    if ($node->hasField('field_announcement_body') && !$node->get('field_announcement_body')->isEmpty()) {
+      $body = $node->get('field_announcement_body')->value;
+    }
+
+    $url = \Drupal::request()->getSchemeAndHttpHost() . '/announcements/' . $node->id();
+
+    $issue = \Drupal::entityTypeManager()->getStorage('simplenews_issue')->create([
+      'title'           => $node->getTitle(),
+      'simplenews_issue' => ['target_id' => $newsletter->id()],
+      'body'            => [
+        'value'  => $body . '<p><a href="' . $url . '">Read on the website →</a></p>',
+        'format' => 'basic_html',
+      ],
+      'status' => 1,
+    ]);
+    $issue->save();
+
+    \Drupal::service('simplenews.mailer')->sendIssue($issue);
+  }
+  catch (\Exception $e) {
+    \Drupal::logger('mlp_members')->error(
+      'Failed to send announcement newsletter: @message',
+      ['@message' => $e->getMessage()]
+    );
+  }
+}
 

@@ -487,4 +487,71 @@ class MemberPortalController extends ControllerBase {
     }
   }
 
+
+  /**
+   * Community history page.
+   */
+  public function history(): array {
+    $config       = \Drupal::config('system.theme.global');
+    $theme_config = \Drupal::config('meadow_lane.settings');
+    $photos_url   = \Drupal::service('theme.manager')->getActiveTheme()->getName() === 'meadow_lane'
+      ? (\Drupal::config('meadow_lane.settings')->get('google_photos_url') ?? '')
+      : '';
+    $join_url     = \Drupal::config('meadow_lane.settings')->get('google_photos_join_url') ?? '';
+
+    // Load approved (published) historical documents.
+    $storage = $this->entityTypeManager()->getStorage('node');
+    $ids = $storage->getQuery()
+      ->condition('type', 'history_document')
+      ->condition('status', 1)
+      ->sort('created', 'DESC')
+      ->accessCheck(TRUE)
+      ->execute();
+
+    $documents = [];
+    foreach ($storage->loadMultiple($ids) as $node) {
+      $file_field = $node->hasField('field_document_file') && !$node->get('field_document_file')->isEmpty()
+        ? $node->get('field_document_file')->entity
+        : NULL;
+      $documents[] = [
+        'id'          => $node->id(),
+        'title'       => $node->getTitle(),
+        'description' => $this->fieldValue($node, 'field_document_description', ''),
+        'created'     => $node->getCreatedTime(),
+        'file_url'    => $file_field ? \Drupal::service('file_url_generator')->generateAbsoluteString($file_field->getFileUri()) : NULL,
+        'file_name'   => $file_field ? $file_field->getFilename() : NULL,
+        'file_mime'   => $file_field ? $file_field->getMimeType() : NULL,
+      ];
+    }
+
+    $account    = \Drupal::currentUser();
+    $can_manage = $account->hasPermission('edit any history_document content')
+               || $account->hasPermission('delete any history_document content');
+
+    return [
+      '#theme'       => 'mlp_history',
+      '#photos_url'  => $photos_url,
+      '#join_url'    => $join_url,
+      '#documents'   => $documents,
+      '#can_manage'  => $can_manage,
+      '#cache'       => [
+        'max-age'  => 300,
+        'tags'     => ['node_list:history_document'],
+        'contexts' => ['user.permissions'],
+      ],
+    ];
+  }
+
+  /**
+   * History document submission page.
+   */
+  public function historySubmit(): array {
+    $form = \Drupal::formBuilder()->getForm('\Drupal\mlp_members\Form\HistoryDocumentForm');
+    return [
+      '#theme'  => 'mlp_history_submit',
+      '#form'   => $form,
+      '#cache'  => ['max-age' => 0],
+    ];
+  }
+
 }
