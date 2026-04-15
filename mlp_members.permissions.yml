@@ -1,0 +1,9 @@
+access member portal:
+  title: 'Access the member portal'
+  description: 'Allows users to view the member portal, announcements, events, and documents.'
+  restrict access: false
+
+manage google drive settings:
+  title: 'Manage Google Drive settings'
+  description: 'Configure Google Drive API credentials and folder IDs.'
+  restrict access: true

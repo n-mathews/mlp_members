@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.event
+  enforced:
+    module:
+      - mlp_members
+id: node.event.field_all_day
+field_name: field_all_day
+entity_type: node
+bundle: event
+label: 'All day'
+description: 'Check if this event runs all day with no specific times.'
+required: false
+translatable: false
+default_value:
+  - value: 0
+default_value_callback: ''
+settings:
+  on_label: 'All day'
+  off_label: 'Specific time'
+field_type: boolean

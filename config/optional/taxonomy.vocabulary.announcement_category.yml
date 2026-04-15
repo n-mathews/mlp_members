@@ -1,0 +1,11 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - mlp_members
+name: 'Announcement category'
+vid: announcement_category
+description: 'Categories for member announcements.'
+hierarchy: 0
+weight: 0

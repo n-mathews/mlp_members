@@ -1,7 +1,0 @@
-langcode: en
-status: true
-dependencies: {}
-id: footer-community
-label: 'Footer — Community'
-description: 'Community links shown in the first footer column.'
-locked: false

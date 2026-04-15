@@ -1,0 +1,12 @@
+services:
+  mlp_members.google_drive:
+    class: Drupal\mlp_members\Service\GoogleDriveService
+    arguments:
+      - '@http_client'
+      - '@cache.default'
+      - '@config.factory'
+      - '@logger.factory'
+  mlp_members.member_access_subscriber:
+    class: Drupal\mlp_members\EventSubscriber\MemberAccessSubscriber
+    tags:
+      - { name: event_subscriber }

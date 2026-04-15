@@ -1,0 +1,72 @@
+mlp_members.portal:
+  path: '/member'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::portal'
+    _title: 'Member Portal'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+mlp_members.documents:
+  path: '/member/documents'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::documents'
+    _title: 'Documents & Forms'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+mlp_members.documents_refresh:
+  path: '/member/documents/refresh'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::refreshDocuments'
+    _title: 'Refresh document cache'
+  requirements:
+    _permission: 'administer site configuration'
+
+mlp_members.events_feed:
+  path: '/events/feed.json'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::eventsFeed'
+    _title: 'Events JSON feed'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+mlp_members.access_denied:
+  path: '/member/join'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::accessDenied'
+    _title: 'Members only'
+  requirements:
+    _access: 'TRUE'
+
+mlp_members.settings:
+  path: '/admin/config/mlp-members'
+  defaults:
+    _form: '\Drupal\mlp_members\Form\MemberSettingsForm'
+    _title: 'MLP Members settings'
+  requirements:
+    _permission: 'manage google drive settings'
+
+mlp_members.announcements:
+  path: '/announcements'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::announcements'
+    _title: 'Announcements'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+mlp_members.announcement_detail:
+  path: '/announcements/{node}'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::announcementDetail'
+    _title: 'Announcement'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    node: \d+
+
+mlp_members.events:
+  path: '/events'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::events'
+    _title: 'Community events'
+  requirements:
+    _user_is_logged_in: 'TRUE'

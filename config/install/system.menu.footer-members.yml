@@ -1,7 +1,0 @@
-langcode: en
-status: true
-dependencies: {}
-id: footer-members
-label: 'Footer — Members'
-description: 'Member links shown in the third footer column.'
-locked: false
