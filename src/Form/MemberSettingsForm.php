@@ -73,7 +73,7 @@ class MemberSettingsForm extends ConfigFormBase {
     $form['drive']['folders_wrapper']['description'] = [
       '#markup' => '<p>' . $this->t(
         'Each folder appears as a separate section in the Documents page. ' .
-        'The folder ID is the string after <code>/folders/</code> in the Google Drive URL.'
+        'The folder or file ID is the string after <code>/folders/</code> or <code>/file/d/</code> in the Google Drive URL. Both folders and individual files are supported.'
       ) . '</p>',
     ];
 
@@ -81,7 +81,7 @@ class MemberSettingsForm extends ConfigFormBase {
     $form['drive']['folders_wrapper']['header'] = [
       '#markup' => '<div style="display:grid;grid-template-columns:1fr 2fr auto;gap:.5rem 1rem;font-weight:500;font-size:.8125rem;color:#444;padding-bottom:.25rem;border-bottom:1px solid #ddd;margin-bottom:.5rem;">' .
                    '<span>' . $this->t('Section label') . '</span>' .
-                   '<span>' . $this->t('Folder ID') . '</span>' .
+                   '<span>' . $this->t('Folder or File ID') . '</span>' .
                    '<span></span>' .
                    '</div>',
     ];
@@ -110,7 +110,7 @@ class MemberSettingsForm extends ConfigFormBase {
 
       $form['drive']['folders_wrapper']['folders'][$i]['id'] = [
         '#type'          => 'textfield',
-        '#title'         => $this->t('Folder ID'),
+        '#title'         => $this->t('Folder or File ID'),
         '#title_display' => 'invisible',
         '#default_value' => $current['id'] ?? '',
         '#placeholder'   => '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs',

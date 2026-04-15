@@ -49,6 +49,48 @@ class GoogleDriveService {
   }
 
   /**
+   * Returns metadata for a single file by ID.
+   */
+  public function getFileMetadata(string $file_id): ?array {
+    $cid = 'mlp_members:drive:file:' . $file_id;
+    $cached = $this->cache->get($cid);
+    if ($cached) {
+      return $cached->data;
+    }
+
+    try {
+      $token = $this->getAccessToken($this->configFactory->get('mlp_members.settings')->get('service_account_key_path'));
+      if (!$token) {
+        return NULL;
+      }
+
+      $response = $this->httpClient->get(self::DRIVE_URL . '/' . $file_id, [
+        'headers' => ['Authorization' => 'Bearer ' . $token],
+        'query'   => [
+          'fields'            => 'id,name,mimeType,webViewLink,size,modifiedTime',
+          'supportsAllDrives' => 'true',
+        ],
+      ]);
+
+      $data = json_decode($response->getBody()->getContents(), TRUE);
+
+      if (isset($data['error']) || empty($data['id'])) {
+        return NULL;
+      }
+
+      $this->cache->set($cid, $data, time() + self::CACHE_TTL);
+      return $data;
+    }
+    catch (\Exception $e) {
+      $this->loggerFactory->get('mlp_members')->error(
+        'Failed to fetch file metadata for @id: @message',
+        ['@id' => $file_id, '@message' => $e->getMessage()]
+      );
+      return NULL;
+    }
+  }
+
+  /**
    * Returns a recursive tree for a folder (up to 2 levels deep).
    * Each node: ['name', 'id', 'files' => [...], 'children' => [...]]
    * Sorted alphabetically at every level.

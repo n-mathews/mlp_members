@@ -58,12 +58,25 @@ class MemberPortalController extends ControllerBase {
         if (empty($folder['id'])) {
           continue;
         }
-        // Check for subfolders — if present, each subfolder becomes a subsection.
-        $subfolders = $this->driveService->getFolderWithSubfolders($folder['id']);
-        $sections[] = [
-          'label'      => $folder['label'] ?? '',
-          'subfolders' => $subfolders,
-        ];
+        // Try to get file metadata first — if it's a single file, wrap it directly.
+        $file_meta = $this->driveService->getFileMetadata($folder['id']);
+        if ($file_meta && $file_meta['mimeType'] !== 'application/vnd.google-apps.folder') {
+          // It's a single file — display it directly.
+          $sections[] = [
+            'label'      => $folder['label'] ?? '',
+            'subfolders' => ['files' => [$file_meta], 'children' => []],
+            'is_file'    => TRUE,
+          ];
+        }
+        else {
+          // It's a folder — recurse into it.
+          $tree = $this->driveService->getFolderWithSubfolders($folder['id']);
+          $sections[] = [
+            'label'      => $folder['label'] ?? '',
+            'subfolders' => $tree,
+            'is_file'    => FALSE,
+          ];
+        }
       }
     }
 
