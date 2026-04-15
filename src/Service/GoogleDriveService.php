@@ -92,6 +92,10 @@ class GoogleDriveService {
 
       $body  = $response->getBody()->getContents();
       $data  = json_decode($body, TRUE);
+      $this->loggerFactory->get('mlp_members')->notice(
+        'Drive API response for folder @folder: @response',
+        ['@folder' => $folder_id, '@response' => substr($body, 0, 500)]
+      );
       if (isset($data['error'])) {
         $this->loggerFactory->get('mlp_members')->error(
           'Google Drive API error for folder @folder: @response',
