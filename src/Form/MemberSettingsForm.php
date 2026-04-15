@@ -52,6 +52,23 @@ class MemberSettingsForm extends ConfigFormBase {
       '#placeholder'   => '/etc/mlp/google-service-account.json',
     ];
 
+    // Read the service account email from the key file if available.
+    $key_path = $config->get('service_account_key_path') ?? '';
+    $service_account_email = '';
+    if ($key_path && file_exists($key_path)) {
+      $key_data = json_decode(@file_get_contents($key_path), TRUE);
+      $service_account_email = $key_data['client_email'] ?? '';
+    }
+
+    $form['drive']['service_account_email'] = [
+      '#type'   => 'item',
+      '#title'  => $this->t('Service account email'),
+      '#markup' => $service_account_email
+        ? '<code style="user-select:all;cursor:pointer;" title="Click to select">' . htmlspecialchars($service_account_email) . '</code>' .
+          '<p class="description">' . $this->t('Share your Drive folders and files with this email address (Viewer role).') . '</p>'
+        : '<em>' . $this->t('Save a valid key file path above to see the service account email.') . '</em>',
+    ];
+
     // ── Folder table ──────────────────────────────────────
     // Determine how many rows to show. Start from saved config,
     // then add any rows the user has requested via "Add another".
