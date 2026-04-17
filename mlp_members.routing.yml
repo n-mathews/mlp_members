@@ -86,3 +86,35 @@ mlp_members.history_submit:
     _title: 'Submit a Document'
   requirements:
     _user_is_logged_in: 'TRUE'
+
+mlp_members.my_unit:
+  path: '/my-unit'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::myUnit'
+    _title: 'My Unit'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+mlp_members.qbo_connect:
+  path: '/admin/config/mlp-members/qbo/connect'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::qboConnect'
+    _title: 'Connect to QuickBooks'
+  requirements:
+    _permission: 'administer site configuration'
+
+mlp_members.qbo_callback:
+  path: '/admin/config/mlp-members/qbo/callback'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::qboCallback'
+    _title: 'QuickBooks Authorization'
+  requirements:
+    _permission: 'administer site configuration'
+
+mlp_members.qbo_disconnect:
+  path: '/admin/config/mlp-members/qbo/disconnect'
+  defaults:
+    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::qboDisconnect'
+    _title: 'Disconnect QuickBooks'
+  requirements:
+    _permission: 'administer site configuration'
