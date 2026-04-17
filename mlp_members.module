@@ -126,14 +126,17 @@ function mlp_members_user_login($account): void {
  * Redirect to a useful page after saving an announcement or event.
  */
 function mlp_members_node_insert(\Drupal\node\NodeInterface $node): void {
-  mlp_members_node_redirect($node);
+  // Send newsletter BEFORE redirect — redirect calls exit() which would abort sending.
   mlp_members_node_insert_newsletter($node);
+  mlp_members_node_redirect($node);
 }
 
 /**
  * Implements hook_node_update().
  */
 function mlp_members_node_update(\Drupal\node\NodeInterface $node): void {
+  // Send newsletter BEFORE redirect.
+  mlp_members_node_insert_newsletter($node);
   mlp_members_node_redirect($node);
 }
 
