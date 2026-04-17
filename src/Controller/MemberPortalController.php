@@ -226,6 +226,22 @@ class MemberPortalController extends ControllerBase {
         }
       }
 
+      $attachments = [];
+      if ($entity->hasField('field_announcement_attachments') && !$entity->get('field_announcement_attachments')->isEmpty()) {
+        foreach ($entity->get('field_announcement_attachments') as $item) {
+          $file = $item->entity;
+          if ($file) {
+            $attachments[] = [
+              'name'        => $file->getFilename(),
+              'url'         => \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri()),
+              'description' => $item->description ?? '',
+              'mime'        => $file->getMimeType(),
+              'size'        => format_size($file->getSize()),
+            ];
+          }
+        }
+      }
+
       $account    = \Drupal::currentUser();
       $is_own     = $entity->getOwnerId() == $account->id();
       $can_edit   = $account->hasPermission('edit any announcement content')
@@ -241,10 +257,11 @@ class MemberPortalController extends ControllerBase {
         '#sticky'     => $entity->isSticky(),
         '#featured'   => (bool) $this->fieldValue($entity, 'field_featured', FALSE),
         '#categories' => $cats,
-        '#can_edit'   => $can_edit,
-        '#can_delete' => $can_delete,
-        '#node_id'    => $entity->id(),
-        '#cache'      => [
+        '#can_edit'    => $can_edit,
+        '#can_delete'  => $can_delete,
+        '#node_id'     => $entity->id(),
+        '#attachments' => $attachments,
+        '#cache'       => [
           'tags'     => ['node:' . $entity->id()],
           'contexts' => ['user.permissions', 'user'],
         ],

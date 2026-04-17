@@ -1,0 +1,24 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_announcement_attachments
+    - node.type.announcement
+  enforced:
+    module:
+      - mlp_members
+id: node.announcement.field_announcement_attachments
+field_name: field_announcement_attachments
+entity_type: node
+bundle: announcement
+label: 'Attachments'
+description: 'Files to attach to this announcement and include in the email notification.'
+required: false
+translatable: true
+default_value: []
+settings:
+  file_extensions: 'pdf doc docx xls xlsx png jpg jpeg'
+  file_directory: 'announcement-attachments'
+  max_filesize: '20 MB'
+  description_field: true
+field_type: file
