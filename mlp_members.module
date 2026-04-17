@@ -265,20 +265,25 @@ function mlp_members_node_insert_newsletter(\Drupal\node\NodeInterface $node): v
       'type'             => 'simplenews_issue',
       'title'            => $node->getTitle(),
       'simplenews_issue' => [
-        'target_id'  => $newsletter->id(),
-        'handler'    => 'simplenews',
+        'target_id' => $newsletter->id(),
       ],
       'body' => [
-        'value'  => $html,
-        'format' => 'full_html',
+        'value'   => $html,
+        'summary' => '',
+        'format'  => 'full_html',
       ],
       'status' => 1,
       'uid'    => 1,
     ]);
     $issue->save();
 
-    // Send immediately via the spooler.
-    \Drupal::service('simplenews.spool_storage')->addFromEntity($issue);
+    \Drupal::logger('mlp_members')->notice(
+      'Newsletter issue created: @id for announcement @nid',
+      ['@id' => $issue->id(), '@nid' => $node->id()]
+    );
+
+    // Send immediately via the spooler (Simplenews 4.x API).
+    \Drupal::service('simplenews.spool_storage')->addIssue($issue);
     \Drupal::service('simplenews.mailer')->sendSpool();
     \Drupal::service('simplenews.spool_storage')->clear();
 
