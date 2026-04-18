@@ -394,12 +394,9 @@ function mlp_members_mailer_message_alter(\Drupal\symfony_mailer\EmailInterface 
 
   $html = \Drupal::state()->get('mlp_pending_html', '');
   if ($html) {
-    // Set the HTML body directly on the Symfony Mailer email object.
-    $email->setBody([
-      '#type'   => 'processed_text',
-      '#text'   => $html,
-      '#format' => 'full_html',
-    ]);
+    // Set HTML body directly — bypasses Simplenews template pipeline entirely.
+    $email->setHtmlBody($html);
+    $email->setTextBody(strip_tags($html));
     \Drupal::state()->delete('mlp_pending_html');
   }
 
