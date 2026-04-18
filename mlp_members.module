@@ -406,8 +406,9 @@ function mlp_members_mail_alter(array &$message): void {
   );
 
   if ($html) {
-    $message['body'] = [$html];
-    $message['headers']['Content-Type'] = 'text/html; charset=UTF-8';
+    // Wrap in Markup so formatBody() treats it as raw HTML (#markup)
+    // rather than processed_text which would escape the HTML tags.
+    $message['body'] = [\Drupal\Core\Render\Markup::create($html)];
     \Drupal::state()->delete('mlp_pending_html');
     \Drupal::logger('mlp_members')->notice('HTML body set via hook_mail_alter.');
   }
