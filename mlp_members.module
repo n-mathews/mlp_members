@@ -290,7 +290,8 @@ function mlp_members_node_insert_newsletter(\Drupal\node\NodeInterface $node): v
         }
       }
     }
-    // Store on the node for use in hook_mailer_message_alter.
+    // Store HTML and attachments in state for hook_mailer_message_alter.
+    \Drupal::state()->set('mlp_pending_html', $html);
     \Drupal::state()->set('mlp_pending_attachments', $attachments);
 
     // In Simplenews 4.x, send by creating a node with the simplenews_issue field
@@ -383,17 +384,34 @@ function mlp_members_announcement_email_html(string $title, string $body, string
 
 /**
  * Implements hook_mailer_message_alter().
- * Attaches files to announcement newsletter emails.
+ * Sets branded HTML body and attaches files to announcement newsletter emails.
  */
 function mlp_members_mailer_message_alter(\Drupal\symfony_mailer\EmailInterface $email): void {
-  $attachments = \Drupal::state()->get('mlp_pending_attachments', []);
-  if (empty($attachments)) {
+  // Only act on simplenews emails.
+  if ($email->getType() !== 'simplenews') {
     return;
   }
+
+  $html = \Drupal::state()->get('mlp_pending_html', '');
+  if ($html) {
+    // Set the HTML body directly on the Symfony Mailer email object.
+    $email->setBody([
+      '#type'   => 'processed_text',
+      '#text'   => $html,
+      '#format' => 'full_html',
+    ]);
+    \Drupal::state()->delete('mlp_pending_html');
+  }
+
+  // Attach files.
+  $attachments = \Drupal::state()->get('mlp_pending_attachments', []);
   foreach ($attachments as $uri) {
     $path = \Drupal::service('file_system')->realpath($uri);
     if ($path && file_exists($path)) {
       $email->attachFromPath($path);
     }
+  }
+  if (!empty($attachments)) {
+    \Drupal::state()->delete('mlp_pending_attachments');
   }
 }
