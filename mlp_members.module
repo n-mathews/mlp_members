@@ -419,3 +419,33 @@ function mlp_members_mail_alter(array &$message): void {
     \Drupal::state()->delete('mlp_pending_attachments');
   }
 }
+
+/**
+ * Implements hook_node_view().
+ * Redirects direct node views to our custom portal pages.
+ */
+function mlp_members_node_view(array &$build, \Drupal\node\NodeInterface $node, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display, $view_mode): void {
+  // Only redirect on full page view, not teasers or other view modes.
+  if ($view_mode !== 'full') {
+    return;
+  }
+
+  // Only redirect on actual page requests, not admin previews or form submissions.
+  $route = \Drupal::routeMatch()->getRouteName();
+  if ($route !== 'entity.node.canonical') {
+    return;
+  }
+
+  $redirects = [
+    'announcement'    => '/announcements/' . $node->id(),
+    'event'           => '/events',
+    'history_document' => '/history',
+  ];
+
+  $type = $node->bundle();
+  if (isset($redirects[$type])) {
+    $response = new \Symfony\Component\HttpFoundation\RedirectResponse($redirects[$type]);
+    $response->send();
+    exit;
+  }
+}

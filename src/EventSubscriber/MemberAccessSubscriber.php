@@ -29,7 +29,16 @@ class MemberAccessSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    $path = $event->getRequest()->getPathInfo();
+    $request = $event->getRequest();
+    $path    = $request->getPathInfo();
+
+    // Never redirect these paths — prevents redirect loops.
+    $excluded = ['/user/login', '/user/password', '/user/register', '/user/logout'];
+    foreach ($excluded as $exclude) {
+      if ($path === $exclude || str_starts_with($path, $exclude . '/')) {
+        return;
+      }
+    }
 
     $protected = ['/member', '/announcements', '/events', '/history'];
     foreach ($protected as $prefix) {
