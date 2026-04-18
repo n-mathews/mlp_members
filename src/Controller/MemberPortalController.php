@@ -228,15 +228,18 @@ class MemberPortalController extends ControllerBase {
 
       $attachments = [];
       if ($entity->hasField('field_announcement_attachments') && !$entity->get('field_announcement_attachments')->isEmpty()) {
+        $file_storage = $this->entityTypeManager()->getStorage('file');
         foreach ($entity->get('field_announcement_attachments') as $item) {
-          $file = $item->entity;
+          $fid  = $item->target_id;
+          $file = $fid ? $file_storage->load($fid) : NULL;
           if ($file) {
             $attachments[] = [
               'name'        => $file->getFilename(),
               'url'         => \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri()),
+              'fid'         => $file->id(),
               'description' => $item->description ?? '',
               'mime'        => $file->getMimeType(),
-              'size'        => format_size($file->getSize()),
+              'size'        => \Drupal\Core\StringTranslation\ByteSizeMarkup::create($file->getSize()),
             ];
           }
         }
