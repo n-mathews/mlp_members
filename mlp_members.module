@@ -577,14 +577,18 @@ function mlp_members_welcome_email_html(\Drupal\user\UserInterface $account, arr
 }
 
 /**
- * Implements hook_user_update().
+ * Implements hook_form_user_form_alter().
  * After saving account/password, redirect to member portal.
  */
-function mlp_members_user_update(\Drupal\user\UserInterface $account): void {
-  // Only redirect on actual form submissions, not programmatic saves.
-  if (!\Drupal::request()->isMethod('POST')) {
-    return;
-  }
+function mlp_members_form_user_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state): void {
+  $form['actions']['submit']['#submit'][] = 'mlp_members_user_form_submit';
+}
+
+/**
+ * Custom submit handler for user account form.
+ */
+function mlp_members_user_form_submit(array &$form, \Drupal\Core\Form\FormStateInterface $form_state): void {
+  $form_state->setRedirect('<front>');
   $response = new \Symfony\Component\HttpFoundation\RedirectResponse('/member');
   $response->send();
   exit;
