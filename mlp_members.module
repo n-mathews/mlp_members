@@ -113,8 +113,8 @@ function mlp_members_local_tasks_alter(array &$data, ?string $route_name): void 
 
 /**
  * Implements hook_user_login().
- * After one-time login, redirect to account edit to set password.
  * After regular login, redirect to member portal if no destination set.
+ * One-time login resets are handled by Drupal core — we don't interfere.
  */
 function mlp_members_user_login($account): void {
   $request     = \Drupal::request();
@@ -124,10 +124,10 @@ function mlp_members_user_login($account): void {
     return; // Honour existing destination.
   }
 
-  // If this is a password-reset login, send to account edit page.
+  // Don't interfere with password reset flow — Drupal handles the redirect
+  // to the change password form with the current-password bypass in place.
   $route = \Drupal::routeMatch()->getRouteName();
   if (in_array($route, ['user.reset.login', 'user.reset', 'user.reset.form'])) {
-    $request->query->set('destination', '/user/' . $account->id() . '/edit');
     return;
   }
 
