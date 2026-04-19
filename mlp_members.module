@@ -135,8 +135,6 @@ function mlp_members_user_login($account): void {
   $request->query->set('destination', '/member');
 }
 
-}
-
 /**
  * Implements hook_node_insert().
  * Redirect to a useful page after saving an announcement or event.
