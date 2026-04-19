@@ -113,13 +113,28 @@ function mlp_members_local_tasks_alter(array &$data, ?string $route_name): void 
 
 /**
  * Implements hook_user_login().
- * Redirect to /member after login if no other destination is set.
+ * After one-time login, redirect to account edit to set password.
+ * After regular login, redirect to member portal if no destination set.
  */
 function mlp_members_user_login($account): void {
-  $destination = \Drupal::request()->query->get('destination');
-  if (!$destination) {
-    \Drupal::service('request_stack')->getCurrentRequest()->query->set('destination', '/member');
+  $request     = \Drupal::request();
+  $destination = $request->query->get('destination');
+
+  if ($destination) {
+    return; // Honour existing destination.
   }
+
+  // If this is a password-reset login, send to account edit page.
+  $route = \Drupal::routeMatch()->getRouteName();
+  if (in_array($route, ['user.reset.login', 'user.reset', 'user.reset.form'])) {
+    $request->query->set('destination', '/user/' . $account->id() . '/edit');
+    return;
+  }
+
+  // Regular login — go to member portal.
+  $request->query->set('destination', '/member');
+}
+
 }
 
 /**
@@ -381,8 +396,6 @@ function mlp_members_announcement_email_html(string $title, string $body, string
  * via LegacyEmailBuilder.
  */
 function mlp_members_mail_alter(array &$message): void {
-  // Log all mail IDs for debugging.
-  \Drupal::logger('mlp_members')->notice('hook_mail_alter: id=@id', ['@id' => $message['id'] ?? 'none']);
 
   // Welcome email for new member accounts.
   if (isset($message['id']) && $message['id'] === 'user_register_admin_created') {
