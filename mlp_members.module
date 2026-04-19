@@ -135,6 +135,7 @@ function mlp_members_user_login($account): void {
   $request->query->set('destination', '/member');
 }
 
+
 /**
  * Implements hook_node_insert().
  * Redirect to a useful page after saving an announcement or event.
@@ -206,7 +207,7 @@ function mlp_members_user_insert(\Drupal\user\UserInterface $account): void {
       return;
     }
     \Drupal::service('simplenews.subscription_manager')
-      ->subscribe($account->getEmail(), $newsletter_id, FALSE, 'mlp_auto');
+      ->subscribe($account->getEmail(), $newsletter_id, FALSE);
   }
   catch (\Exception $e) {
     \Drupal::logger('mlp_members')->error(
