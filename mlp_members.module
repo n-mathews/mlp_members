@@ -588,8 +588,5 @@ function mlp_members_form_user_form_alter(array &$form, \Drupal\Core\Form\FormSt
  * Custom submit handler for user account form.
  */
 function mlp_members_user_form_submit(array &$form, \Drupal\Core\Form\FormStateInterface $form_state): void {
-  $form_state->setRedirect('<front>');
-  $response = new \Symfony\Component\HttpFoundation\RedirectResponse('/member');
-  $response->send();
-  exit;
+  $form_state->setRedirect('mlp_members.portal');
 }
