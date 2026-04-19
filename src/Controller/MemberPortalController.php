@@ -31,12 +31,16 @@ class MemberPortalController extends ControllerBase {
     $featured      = $this->loadFeaturedAnnouncement();
     $events        = $this->loadUpcomingEvents(8);
     $announcements = $this->loadRecentAnnouncements(8);
+    $board_email   = \Drupal::config('meadow_lane.settings')->get('board_email') ?? 'board@meadowlanepark.com';
+    $board_phone   = \Drupal::config('meadow_lane.settings')->get('board_phone') ?? '';
 
     return [
       '#theme'         => 'mlp_member_portal',
       '#featured'      => $featured,
       '#announcements' => $announcements,
       '#events'        => $events,
+      '#board_email'   => $board_email,
+      '#board_phone'   => $board_phone,
       '#cache'         => [
         'max-age' => 300,
         'tags'    => ['node_list:announcement', 'node_list:event'],

@@ -6,6 +6,25 @@
 #}
 <div class="member-portal">
 
+  {# ── Board contact bar ───────────────────────────────── #}
+  {% if board_phone or board_email %}
+    <div class="member-contact-bar">
+      {% if board_phone %}
+        <a href="tel:{{ board_phone|replace({' ': '', '(': '', ')': '', '-': ''}) }}" class="member-contact-bar__item">
+          <svg viewBox="0 0 20 20" fill="none" width="16" height="16" aria-hidden="true"><path d="M3 3.5A1.5 1.5 0 014.5 2h1.879a1 1 0 01.894.553l1.5 3a1 1 0 01-.24 1.136l-.96.96a8.002 8.002 0 003.778 3.778l.96-.96a1 1 0 011.136-.24l3 1.5A1 1 0 0118 12.62V14.5A1.5 1.5 0 0116.5 16C8.492 16 2 9.508 2 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          {{ board_phone }}
+        </a>
+      {% endif %}
+      {% if board_email %}
+        <a href="mailto:{{ board_email }}" class="member-contact-bar__item">
+          <svg viewBox="0 0 20 20" fill="none" width="16" height="16" aria-hidden="true"><path d="M2 5.5A1.5 1.5 0 013.5 4h13A1.5 1.5 0 0118 5.5v9A1.5 1.5 0 0116.5 16h-13A1.5 1.5 0 012 14.5v-9z" stroke="currentColor" stroke-width="1.5"/><path d="M2 6l8 5 8-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          {{ board_email }}
+        </a>
+      {% endif %}
+    </div>
+  {% endif %}
+
+
   {# ── Featured announcement ───────────────────────────── #}
   {% if featured %}
     <div class="member-featured-announcement">

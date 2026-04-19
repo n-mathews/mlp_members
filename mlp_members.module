@@ -17,6 +17,8 @@ function mlp_members_theme(): array {
         'featured'      => NULL,
         'announcements' => [],
         'events'        => [],
+        'board_email'   => '',
+        'board_phone'   => '',
       ],
     ],
     'mlp_member_documents' => [
