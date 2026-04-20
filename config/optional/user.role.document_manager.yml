@@ -13,4 +13,4 @@ permissions:
   - 'create history_document content'
   - 'access administration pages'
   - 'access toolbar'
-  - 'administer mlp_members settings'
+  - 'manage google drive settings'
