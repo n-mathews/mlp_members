@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - mlp_members
+id: history_manager
+label: 'History Manager'
+weight: 4
+is_admin: false
+permissions:
+  - 'access content'
+  - 'access administration pages'
+  - 'access toolbar'
+  - 'view the administration theme'
+  - 'create history_document content'
+  - 'edit any history_document content'
+  - 'delete any history_document content'
+  - 'administer nodes'

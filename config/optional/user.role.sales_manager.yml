@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - mlp_members
+id: sales_manager
+label: 'Sales Manager'
+weight: 6
+is_admin: false
+permissions:
+  - 'access content'
+  - 'create history_document content'
+  - 'access administration pages'
+  - 'access toolbar'
+  - 'view the administration theme'
+  - 'create home_listing content'
+  - 'edit any home_listing content'
+  - 'delete any home_listing content'
+  - 'create home_sale content'
+  - 'edit any home_sale content'
+  - 'delete any home_sale content'
+  - 'administer nodes'

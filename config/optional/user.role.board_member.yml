@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - mlp_members
+id: board_member
+label: 'Board Member'
+weight: 7
+is_admin: false
+permissions:
+  - 'access content'
+  - 'access administration pages'
+  - 'access toolbar'
+  - 'view the administration theme'
+  - 'access user profiles'
+  - 'administer users'
+  - 'assign member role'
+  - 'assign events_manager role'
+  - 'assign history_manager role'
+  - 'assign document_manager role'
+  - 'assign sales_manager role'
+  - 'assign board_member role'
+  - 'create history_document content'
+  - 'create announcement content'
+  - 'edit any announcement content'
+  - 'delete any announcement content'
+  - 'administer nodes'

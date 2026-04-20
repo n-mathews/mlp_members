@@ -1,0 +1,16 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - mlp_members
+id: events_manager
+label: 'Events Manager'
+weight: 3
+is_admin: false
+permissions:
+  - 'access content'
+  - 'create history_document content'
+  - 'create event content'
+  - 'edit any event content'
+  - 'delete any event content'

@@ -12,7 +12,7 @@ use Drupal\Core\Url;
  */
 function mlp_members_theme(): array {
   return [
-    'mlp_member_portal' => [
+'mlp_member_portal' => [
       'variables' => [
         'featured'      => NULL,
         'announcements' => [],
@@ -464,7 +464,7 @@ function mlp_members_node_view(array &$build, \Drupal\node\NodeInterface $node, 
   }
 
   $redirects = [
-    'announcement'    => '/announcements/' . $node->id(),
+    'announcement'    => '/announcements/' . \$node->id(),
     'event'           => '/events',
     'history_document' => '/history',
   ];
@@ -591,4 +591,71 @@ function mlp_members_form_user_form_alter(array &$form, \Drupal\Core\Form\FormSt
  */
 function mlp_members_user_form_submit(array &$form, \Drupal\Core\Form\FormStateInterface $form_state): void {
   $form_state->setRedirect('mlp_members.portal');
+}
+
+/**
+ * Implements hook_preprocess_toolbar().
+ * Adds a role-specific class to the toolbar for CSS-based menu restriction.
+ */
+function mlp_members_preprocess_toolbar(array &$variables): void {
+  $account = \Drupal::currentUser();
+  if ($account->hasRole('administrator')) {
+    return;
+  }
+  $role_classes = [
+    'board_member'    => 'toolbar--board-member',
+    'history_manager' => 'toolbar--history-manager',
+    'document_manager'=> 'toolbar--document-manager',
+    'sales_manager'   => 'toolbar--sales-manager',
+  ];
+  foreach ($role_classes as $role => $class) {
+    if ($account->hasRole($role)) {
+      $variables['attributes']['class'][] = $class;
+    }
+  }
+}
+
+/**
+ * Implements hook_user_update().
+ * Logs profile changes for audit purposes.
+ */
+function mlp_members_user_update(\Drupal\user\UserInterface $account): void {
+  $current_user = \Drupal::currentUser();
+
+  // Detect what changed.
+  $changes = [];
+  if ($account->original->getEmail() !== $account->getEmail()) {
+    $changes[] = 'email changed from ' . $account->original->getEmail() . ' to ' . $account->getEmail();
+  }
+  if ($account->original->getAccountName() !== $account->getAccountName()) {
+    $changes[] = 'username changed';
+  }
+  // Detect role changes.
+  $old_roles = $account->original->getRoles();
+  $new_roles = $account->getRoles();
+  $added   = array_diff($new_roles, $old_roles);
+  $removed = array_diff($old_roles, $new_roles);
+  if ($added) {
+    $changes[] = 'roles added: ' . implode(', ', $added);
+  }
+  if ($removed) {
+    $changes[] = 'roles removed: ' . implode(', ', $removed);
+  }
+  // Detect password change (Drupal clears pass on save if unchanged).
+  if (!empty($account->pass->value)) {
+    $changes[] = 'password changed';
+  }
+
+  if (!empty($changes)) {
+    \Drupal::logger('mlp_members_audit')->notice(
+      'User profile updated for @user (uid @uid) by @editor (uid @editor_uid): @changes',
+      [
+        '@user'       => $account->getAccountName(),
+        '@uid'        => $account->id(),
+        '@editor'     => $current_user->getAccountName(),
+        '@editor_uid' => $current_user->id(),
+        '@changes'    => implode('; ', $changes),
+      ]
+    );
+  }
 }

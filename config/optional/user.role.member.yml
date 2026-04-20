@@ -1,0 +1,13 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - mlp_members
+id: member
+label: Member
+weight: 2
+is_admin: false
+permissions:
+  - 'access content'
+  - 'create history_document content'
