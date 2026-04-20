@@ -10,11 +10,6 @@ weight: 4
 is_admin: false
 permissions:
   - 'access content'
-  - 'access administration pages'
-  - 'access toolbar'
-  - 'view the administration theme'
   - 'create history_document content'
   - 'edit any history_document content'
   - 'delete any history_document content'
-  - 'administer nodes'
-  - 'access content overview'

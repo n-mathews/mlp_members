@@ -85,7 +85,8 @@ class HistoryDocumentForm extends FormBase {
       'title'                      => $form_state->getValue('title'),
       'field_document_description' => ['value' => $form_state->getValue('description'), 'format' => 'plain_text'],
       'field_document_file'        => ['target_id' => $fid],
-      'status'                     => 0, // Unpublished — pending review.
+      // Publish immediately for managers, pending review for regular members.
+      'status' => \Drupal::currentUser()->hasPermission('edit any history_document content') ? 1 : 0,
       'uid'                        => \Drupal::currentUser()->id(),
     ]);
     $node->save();

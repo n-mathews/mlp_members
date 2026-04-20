@@ -523,8 +523,12 @@ class MemberPortalController extends ControllerBase {
       : '';
     $join_url     = \Drupal::config('meadow_lane.settings')->get('google_photos_join_url') ?? '';
 
+    $storage    = $this->entityTypeManager()->getStorage('node');
+    $account    = \Drupal::currentUser();
+    $can_manage = $account->hasPermission('edit any history_document content')
+               || $account->hasPermission('delete any history_document content');
+
     // Load approved (published) historical documents.
-    $storage = $this->entityTypeManager()->getStorage('node');
     $ids = $storage->getQuery()
       ->condition('type', 'history_document')
       ->condition('status', 1)
@@ -542,26 +546,52 @@ class MemberPortalController extends ControllerBase {
         'title'       => $node->getTitle(),
         'description' => $this->fieldValue($node, 'field_document_description', ''),
         'created'     => $node->getCreatedTime(),
+        'published'   => TRUE,
         'file_url'    => $file_field ? \Drupal::service('file_url_generator')->generateAbsoluteString($file_field->getFileUri()) : NULL,
         'file_name'   => $file_field ? $file_field->getFilename() : NULL,
         'file_mime'   => $file_field ? $file_field->getMimeType() : NULL,
       ];
     }
 
-    $account    = \Drupal::currentUser();
-    $can_manage = $account->hasPermission('edit any history_document content')
-               || $account->hasPermission('delete any history_document content');
+    // For managers, also load pending (unpublished) submissions.
+    $pending = [];
+    if ($can_manage) {
+      $pending_ids = $storage->getQuery()
+        ->condition('type', 'history_document')
+        ->condition('status', 0)
+        ->sort('created', 'ASC')
+        ->accessCheck(FALSE)
+        ->execute();
+
+      foreach ($storage->loadMultiple($pending_ids) as $node) {
+        $file_field = $node->hasField('field_document_file') && !$node->get('field_document_file')->isEmpty()
+          ? $node->get('field_document_file')->entity
+          : NULL;
+        $pending[] = [
+          'id'          => $node->id(),
+          'title'       => $node->getTitle(),
+          'description' => $this->fieldValue($node, 'field_document_description', ''),
+          'created'     => $node->getCreatedTime(),
+          'published'   => FALSE,
+          'submitter'   => $node->getOwner()->getDisplayName(),
+          'file_url'    => $file_field ? \Drupal::service('file_url_generator')->generateAbsoluteString($file_field->getFileUri()) : NULL,
+          'file_name'   => $file_field ? $file_field->getFilename() : NULL,
+          'file_mime'   => $file_field ? $file_field->getMimeType() : NULL,
+        ];
+      }
+    }
 
     return [
       '#theme'       => 'mlp_history',
       '#photos_url'  => $photos_url,
       '#join_url'    => $join_url,
       '#documents'   => $documents,
+      '#pending'     => $pending,
       '#can_manage'  => $can_manage,
       '#cache'       => [
-        'max-age'  => 300,
+        'max-age'  => 0,
         'tags'     => ['node_list:history_document'],
-        'contexts' => ['user.permissions'],
+        'contexts' => ['user.permissions', 'user'],
       ],
     ];
   }
@@ -578,5 +608,22 @@ class MemberPortalController extends ControllerBase {
     ];
   }
 
+
+
+  /**
+   * Approves (publishes) a history document submission.
+   */
+  public function historyApprove($node): \Symfony\Component\HttpFoundation\RedirectResponse {
+    $storage = $this->entityTypeManager()->getStorage('node');
+    $entity  = $storage->load($node);
+
+    if ($entity && $entity->bundle() === 'history_document' && !$entity->isPublished()) {
+      $entity->setPublished();
+      $entity->save();
+      \Drupal::messenger()->addStatus(t('"@title" has been approved and published.', ['@title' => $entity->getTitle()]));
+    }
+
+    return new \Symfony\Component\HttpFoundation\RedirectResponse('/history');
+  }
 
 }
