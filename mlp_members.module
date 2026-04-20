@@ -594,6 +594,42 @@ function mlp_members_user_form_submit(array &$form, \Drupal\Core\Form\FormStateI
 }
 
 /**
+ * Implements hook_toolbar().
+ * Adds a direct Drive settings link to the toolbar for document managers.
+ */
+function mlp_members_toolbar(): array {
+  $account = \Drupal::currentUser();
+  if (!$account->hasRole('document_manager') || $account->hasRole('administrator')) {
+    return [];
+  }
+
+  return [
+    'mlp_drive' => [
+      '#type'   => 'toolbar_item',
+      '#weight' => 999,
+      'tab'     => [
+        '#type'       => 'link',
+        '#title'      => t('Drive Settings'),
+        '#url'        => \Drupal\Core\Url::fromRoute('mlp_members.settings'),
+        '#attributes' => [
+          'title' => t('Manage Google Drive folder settings'),
+          'class' => ['toolbar-icon', 'toolbar-icon-system-admin-config'],
+        ],
+      ],
+      '#wrapper_attributes' => [
+        'class' => ['mlp-drive-toolbar-item'],
+      ],
+      '#attached' => [
+        'library' => ['toolbar/toolbar'],
+      ],
+      '#cache' => [
+        'contexts' => ['user.roles'],
+      ],
+    ],
+  ];
+}
+
+/**
  * Implements hook_preprocess_toolbar().
  * Adds a role-specific class to the toolbar for CSS-based menu restriction.
  */

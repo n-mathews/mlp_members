@@ -1,6 +1,6 @@
 mlp_members.settings:
-  title: 'MLP Members'
-  description: 'Configure Google Drive integration and member portal settings.'
+  title: 'MLP Members — Drive Settings'
+  description: 'Configure Google Drive folder IDs for the member documents page.'
   route_name: mlp_members.settings
-  parent: system.admin_config_content
+  parent: system.admin_config
   weight: 10
