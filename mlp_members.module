@@ -595,16 +595,19 @@ function mlp_members_user_form_submit(array &$form, \Drupal\Core\Form\FormStateI
 
 /**
  * Implements hook_toolbar().
- * Adds a direct Drive settings link to the toolbar for document managers.
+ * Adds role-specific shortcut links to the toolbar.
  */
 function mlp_members_toolbar(): array {
   $account = \Drupal::currentUser();
-  if (!$account->hasRole('document_manager') || $account->hasRole('administrator')) {
+  $items   = [];
+
+  if ($account->hasRole('administrator')) {
     return [];
   }
 
-  return [
-    'mlp_drive' => [
+  // Document manager — Drive Settings shortcut.
+  if ($account->hasRole('document_manager')) {
+    $items['mlp_drive'] = [
       '#type'   => 'toolbar_item',
       '#weight' => 999,
       'tab'     => [
@@ -616,17 +619,58 @@ function mlp_members_toolbar(): array {
           'class' => ['toolbar-icon', 'toolbar-icon-system-admin-config'],
         ],
       ],
-      '#wrapper_attributes' => [
-        'class' => ['mlp-drive-toolbar-item'],
+      '#wrapper_attributes' => ['class' => ['mlp-drive-toolbar-item']],
+      '#cache' => ['contexts' => ['user.roles']],
+    ];
+  }
+
+  // History manager — shortcuts to content list and add form.
+  if ($account->hasRole('history_manager')) {
+    $items['mlp_history'] = [
+      '#type'   => 'toolbar_item',
+      '#weight' => 998,
+      'tab'     => [
+        '#type'  => 'link',
+        '#title' => t('History Documents'),
+        '#url'   => \Drupal\Core\Url::fromUri('internal:/admin/content', [
+          'query' => ['type' => 'history_document', 'status' => 'All'],
+        ]),
+        '#attributes' => [
+          'title' => t('Manage and moderate historical document submissions'),
+          'class' => ['toolbar-icon', 'toolbar-icon-system-admin-content'],
+        ],
       ],
-      '#attached' => [
-        'library' => ['toolbar/toolbar'],
+      'tray' => [
+        '#heading' => t('History'),
+        'links' => [
+          '#theme' => 'links__toolbar',
+          '#links' => [
+            'all' => [
+              'title' => t('All submissions'),
+              'url'   => \Drupal\Core\Url::fromUri('internal:/admin/content', [
+                'query' => ['type' => 'history_document', 'status' => 'All'],
+              ]),
+            ],
+            'pending' => [
+              'title' => t('Pending approval'),
+              'url'   => \Drupal\Core\Url::fromUri('internal:/admin/content', [
+                'query' => ['type' => 'history_document', 'status' => '0'],
+              ]),
+            ],
+            'add' => [
+              'title' => t('Add document'),
+              'url'   => \Drupal\Core\Url::fromUri('internal:/node/add/history_document'),
+            ],
+          ],
+          '#attributes' => ['class' => ['toolbar-menu']],
+        ],
       ],
-      '#cache' => [
-        'contexts' => ['user.roles'],
-      ],
-    ],
-  ];
+      '#wrapper_attributes' => ['class' => ['mlp-history-toolbar-item']],
+      '#cache' => ['contexts' => ['user.roles']],
+    ];
+  }
+
+  return $items;
 }
 
 /**

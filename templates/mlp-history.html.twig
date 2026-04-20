@@ -65,12 +65,26 @@
   <section class="history-documents">
     <div class="history-section__header">
       <h2 class="history-section__title">{{ 'Historical Documents'|t }}</h2>
-      <a href="/history/submit" class="btn btn--primary btn--sm">
-        <svg viewBox="0 0 16 16" fill="none" width="14" height="14" aria-hidden="true">
-          <path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        {{ 'Submit a document'|t }}
-      </a>
+      <div style="display:flex;gap:var(--space-3);flex-wrap:wrap;">
+        {% if can_manage %}
+          <a href="/node/add/history_document" class="btn btn--primary btn--sm">
+            <svg viewBox="0 0 16 16" fill="none" width="14" height="14" aria-hidden="true">
+              <path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            {{ 'Add document'|t }}
+          </a>
+          <a href="/admin/content?type=history_document&status=0" class="btn btn--outline btn--sm">
+            {{ 'Review submissions'|t }}
+          </a>
+        {% else %}
+          <a href="/history/submit" class="btn btn--primary btn--sm">
+            <svg viewBox="0 0 16 16" fill="none" width="14" height="14" aria-hidden="true">
+              <path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            {{ 'Submit a document'|t }}
+          </a>
+        {% endif %}
+      </div>
     </div>
 
     {% if documents %}
