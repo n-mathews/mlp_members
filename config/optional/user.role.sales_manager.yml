@@ -21,3 +21,4 @@ permissions:
   - 'edit any home_sale content'
   - 'delete any home_sale content'
   - 'administer nodes'
+  - 'access content overview'

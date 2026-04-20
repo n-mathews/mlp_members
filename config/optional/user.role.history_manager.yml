@@ -17,3 +17,4 @@ permissions:
   - 'edit any history_document content'
   - 'delete any history_document content'
   - 'administer nodes'
+  - 'access content overview'
