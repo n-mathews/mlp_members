@@ -464,7 +464,7 @@ function mlp_members_node_view(array &$build, \Drupal\node\NodeInterface $node, 
   }
 
   $redirects = [
-    'announcement'    => '/announcements/' . \$node->id(),
+    'announcement'    => '/announcements/' . $node->id(),
     'event'           => '/events',
     'history_document' => '/history',
   ];
