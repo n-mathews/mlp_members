@@ -1,0 +1,102 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.home_sale.field_home_description
+    - field.field.node.home_sale.field_home_price
+    - field.field.node.home_sale.field_listing_address
+    - field.field.node.home_sale.field_listing_bathrooms
+    - field.field.node.home_sale.field_listing_bedrooms
+    - field.field.node.home_sale.field_listing_images
+    - field.field.node.home_sale.field_listing_sqft
+    - field.field.node.home_sale.field_listing_status
+    - field.field.node.home_sale.field_sale_contact_name
+    - field.field.node.home_sale.field_sale_contact_number
+    - node.type.home_sale
+  module:
+    - image
+    - options
+    - text
+id: node.home_sale.default
+targetEntityType: node
+bundle: home_sale
+mode: default
+content:
+  title:
+    type: string_textfield
+    weight: -5
+    settings:
+      size: 60
+      placeholder: 'e.g. 3BR/2BA Double-Wide — Move-In Ready'
+    third_party_settings: {}
+  field_listing_address:
+    type: string_textfield
+    weight: 0
+    settings:
+      size: 60
+      placeholder: 'e.g. Lot 42 — Pinehurst Rd'
+    third_party_settings: {}
+  field_listing_status:
+    type: options_select
+    weight: 1
+    settings: {}
+    third_party_settings: {}
+  field_home_price:
+    type: number
+    weight: 2
+    settings:
+      placeholder: ''
+    third_party_settings: {}
+  field_listing_bedrooms:
+    type: number
+    weight: 3
+    settings:
+      placeholder: ''
+    third_party_settings: {}
+  field_listing_bathrooms:
+    type: number
+    weight: 4
+    settings:
+      placeholder: ''
+    third_party_settings: {}
+  field_listing_sqft:
+    type: number
+    weight: 5
+    settings:
+      placeholder: ''
+    third_party_settings: {}
+  field_home_description:
+    type: text_textarea
+    weight: 6
+    settings:
+      rows: 6
+      placeholder: ''
+    third_party_settings: {}
+  field_listing_images:
+    type: image_image
+    weight: 7
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {}
+  field_sale_contact_name:
+    type: string_textfield
+    weight: 8
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {}
+  field_sale_contact_number:
+    type: string_textfield
+    weight: 9
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {}
+hidden:
+  comment: true
+  created: true
+  langcode: true
+  promote: true
+  sticky: true
+  uid: true

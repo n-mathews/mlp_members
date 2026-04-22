@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_listing_sqft
+    - node.type.home_sale
+module: core
+id: node.home_sale.field_listing_sqft
+field_name: field_listing_sqft
+entity_type: node
+bundle: home_sale
+label: 'Square Footage'
+description: ''
+required: false
+translatable: false
+default_value: []
+default_value_callback: ''
+settings: {}
+field_type: integer

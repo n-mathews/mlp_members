@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_listing_images
+    - node.type.home_sale
+module: image
+id: node.home_sale.field_listing_images
+field_name: field_listing_images
+entity_type: node
+bundle: home_sale
+label: Photos
+description: 'Upload up to 5 photos. First photo is used as the listing card image.'
+required: false
+translatable: false
+default_value: []
+default_value_callback: ''
+settings:
+  file_directory: 'listings/[date:custom:Y]'
+  file_extensions: 'png jpg jpeg webp'
+  max_filesize: '10 MB'
+  max_resolution: ''
+  min_resolution: ''
+  alt_field: true
+  alt_field_required: false
+  title_field: false
+  title_field_required: false
+  default_image:
+    uuid: null
+    alt: ''
+    title: ''
+    width: null
+    height: null
+field_type: image

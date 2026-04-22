@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_listing_status
+    - node.type.home_sale
+module: options
+id: node.home_sale.field_listing_status
+field_name: field_listing_status
+entity_type: node
+bundle: home_sale
+label: Status
+description: ''
+required: true
+translatable: false
+default_value:
+  - value: for_sale
+default_value_callback: ''
+settings: {}
+field_type: list_string
