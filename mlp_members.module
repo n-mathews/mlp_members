@@ -606,6 +606,31 @@ function mlp_members_toolbar(): array {
     return [];
   }
 
+
+  // Portal link — back to member portal for all restricted roles.
+  $restricted_roles = ['board_member', 'history_manager', 'document_manager', 'sales_manager'];
+  foreach ($restricted_roles as $r) {
+    if ($account->hasRole($r)) {
+      $items['mlp_portal'] = [
+        '#type'   => 'toolbar_item',
+        '#weight' => -999,
+        'tab'     => [
+          '#type'       => 'link',
+          '#title'      => t('\u2190 Portal'),
+          '#url'        => \Drupal\Core\Url::fromUri('internal:/member'),
+          '#attributes' => [
+            'title' => t('Return to member portal'),
+            'class' => ['toolbar-icon', 'toolbar-icon-user-login'],
+            'style' => 'font-weight:600;',
+          ],
+        ],
+        '#wrapper_attributes' => ['class' => ['mlp-portal-toolbar-item']],
+        '#cache' => ['contexts' => ['user.roles']],
+      ];
+      break;
+    }
+  }
+
   // Document manager — Drive Settings shortcut.
   if ($account->hasRole('document_manager')) {
     $items['mlp_drive'] = [
@@ -645,7 +670,7 @@ function mlp_members_preprocess_toolbar(array &$variables): void {
   ];
   foreach ($role_classes as $role => $class) {
     if ($account->hasRole($role)) {
-      $variables['attributes']['class'][] = $class;
+      $variables['attributes']->addClass($class);
     }
   }
 }

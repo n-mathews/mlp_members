@@ -19,3 +19,4 @@ permissions:
   - 'delete any home_sale content'
   - 'administer nodes'
   - 'access content overview'
+  - 'use text format basic_html'
