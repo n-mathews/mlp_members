@@ -670,7 +670,10 @@ function mlp_members_preprocess_toolbar(array &$variables): void {
   ];
   foreach ($role_classes as $role => $class) {
     if ($account->hasRole($role)) {
-      $variables['attributes']->addClass($class);
+      if (!isset($variables['attributes']['class'])) {
+        $variables['attributes']['class'] = [];
+      }
+      $variables['attributes']['class'][] = $class;
     }
   }
 }
