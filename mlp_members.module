@@ -616,7 +616,7 @@ function mlp_members_toolbar(): array {
         '#weight' => -999,
         'tab'     => [
           '#type'       => 'link',
-          '#title'      => t('← Portal'),
+          '#title'      => t('Member Portal'),
           '#url'        => \Drupal\Core\Url::fromUri('internal:/member'),
           '#attributes' => [
             'title' => t('Return to member portal'),
@@ -721,4 +721,26 @@ function mlp_members_user_update(\Drupal\user\UserInterface $account): void {
       ]
     );
   }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_access() for user entities.
+ * Prevents board members from editing or blocking administrator accounts.
+ */
+function mlp_members_user_access(\Drupal\user\UserInterface $entity, $operation, \Drupal\Core\Session\AccountInterface $account): \Drupal\Core\Access\AccessResultInterface {
+  // Only restrict board members who are not themselves administrators.
+  if (!$account->hasRole('board_member') || $account->hasRole('administrator')) {
+    return \Drupal\Core\Access\AccessResult::neutral();
+  }
+
+  // Prevent board members from editing or deleting administrator accounts.
+  if (in_array($operation, ['update', 'delete'])) {
+    if ($entity->hasRole('administrator') || $entity->id() == 1) {
+      return \Drupal\Core\Access\AccessResult::forbidden()
+        ->addCacheableDependency($entity)
+        ->addCacheableDependency($account);
+    }
+  }
+
+  return \Drupal\Core\Access\AccessResult::neutral();
 }
