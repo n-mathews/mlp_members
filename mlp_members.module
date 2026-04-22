@@ -616,7 +616,7 @@ function mlp_members_toolbar(): array {
         '#weight' => -999,
         'tab'     => [
           '#type'       => 'link',
-          '#title'      => t('\u2190 Portal'),
+          '#title'      => t('← Portal'),
           '#url'        => \Drupal\Core\Url::fromUri('internal:/member'),
           '#attributes' => [
             'title' => t('Return to member portal'),
