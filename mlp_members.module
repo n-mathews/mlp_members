@@ -744,3 +744,32 @@ function mlp_members_user_access(\Drupal\user\UserInterface $entity, $operation,
 
   return \Drupal\Core\Access\AccessResult::neutral();
 }
+
+/**
+ * Implements hook_file_download().
+ * Grant access to private files for authenticated users with appropriate permissions.
+ */
+function mlp_members_file_download($uri) {
+  // Grant access to history documents for users who can edit them.
+  if (strpos($uri, 'private://history-documents/') === 0) {
+    if (\Drupal::currentUser()->hasPermission('edit any history_document content')
+      || \Drupal::currentUser()->hasPermission('create history_document content')) {
+      return [
+        'Content-Type' => \Drupal::service('file.mime_type.guesser')->guessMimeType($uri),
+      ];
+    }
+    return -1;
+  }
+
+  // Grant access to announcement attachments for authenticated members.
+  if (strpos($uri, 'private://announcement-attachments/') === 0) {
+    if (\Drupal::currentUser()->isAuthenticated()) {
+      return [
+        'Content-Type' => \Drupal::service('file.mime_type.guesser')->guessMimeType($uri),
+      ];
+    }
+    return -1;
+  }
+
+  return NULL;
+}
