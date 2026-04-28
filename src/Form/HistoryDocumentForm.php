@@ -44,8 +44,7 @@ class HistoryDocumentForm extends FormBase {
       '#required'         => TRUE,
       '#upload_location'  => 'private://history-documents/',
       '#upload_validators' => [
-        'file_validate_extensions' => ['pdf jpg jpeg png gif tif tiff doc docx'],
-        'file_validate_size'       => [20 * 1024 * 1024],
+        'FileExtension' => ['extensions' => 'pdf jpg jpeg png gif tif tiff doc docx'],
       ],
     ];
 
