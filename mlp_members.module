@@ -784,3 +784,23 @@ function mlp_members_file_download($uri) {
 
   return NULL;
 }
+
+/**
+ * Implements hook_form_alter().
+ * Fix Simplenews block form mail field value retrieval bug in 4.1.1.
+ */
+function mlp_members_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state, string $form_id): void {
+  if (strpos($form_id, 'simplenews_subscriptions_block') === 0) {
+    array_unshift($form['#validate'], 'mlp_members_simplenews_block_validate');
+  }
+}
+
+/**
+ * Custom validate handler to fix mail field structure for Simplenews block.
+ */
+function mlp_members_simplenews_block_validate(array &$form, \Drupal\Core\Form\FormStateInterface $form_state): void {
+  $mail = $form_state->getValue('mail');
+  if (is_string($mail)) {
+    $form_state->setValue(['mail', 0, 'value'], $mail);
+  }
+}
