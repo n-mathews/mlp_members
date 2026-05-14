@@ -373,6 +373,17 @@ function mlp_members_announcement_email_html(string $title, string $body, string
   $html .= '<div style="font-family:system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.7;color:#374640;">' . $body . '</div>';
   $html .= '</td></tr>';
 
+  // Facebook section.
+  $html .= '<tr><td style="background-color:#ffffff;padding:24px 40px;border-left:1px solid #e5e7e6;border-right:1px solid #e5e7e6;">';
+  $html .= '<hr style="border:none;border-top:1px solid #e5e7e6;margin:0 0 24px;">';
+  $html .= '<h3 style="margin:0 0 8px;font-family:Georgia,serif;font-size:16px;font-weight:400;color:#1a2820;">On Facebook?</h3>';
+  $html .= '<p style="margin:0 0 12px;font-family:system-ui,-apple-system,sans-serif;font-size:13px;color:#6b7c75;line-height:1.6;">Request to join our private community Facebook group to connect with your neighbors.</p>';
+  $html .= '<table role="presentation" cellspacing="0" cellpadding="0" border="0"><tr>';
+  $html .= '<td style="padding-right:12px;"><a href="https://www.facebook.com/groups/meadowlanepark" style="font-family:system-ui,-apple-system,sans-serif;font-size:13px;font-weight:500;color:#4A7C6F;text-decoration:none;">&#128101; Private Community Group &rarr;</a></td>';
+  $html .= '<td><a href="https://www.facebook.com/meadowlanepark" style="font-family:system-ui,-apple-system,sans-serif;font-size:13px;font-weight:500;color:#4A7C6F;text-decoration:none;">&#128241; Public Facebook Page &rarr;</a></td>';
+  $html .= '</tr></table>';
+  $html .= '</td></tr>';
+
   // CTA button.
   $html .= '<tr><td style="background-color:#ffffff;padding:0 40px 40px;border-left:1px solid #e5e7e6;border-right:1px solid #e5e7e6;">';
   $html .= '<table role="presentation" cellspacing="0" cellpadding="0" border="0"><tr>';
@@ -413,6 +424,9 @@ function mlp_members_mail_alter(array &$message): void {
   if (!isset($message['id']) || strpos($message['id'], 'simplenews') === FALSE) {
     return;
   }
+  \Drupal::logger('mlp_members')->notice('mail_alter simplenews fired, html length: @len', [
+    '@len' => strlen(\Drupal::state()->get('mlp_pending_html', '')),
+  ]);
 
   // Set branded HTML body.
   $html = \Drupal::state()->get('mlp_pending_html', '');
@@ -576,7 +590,7 @@ function mlp_members_welcome_email_html(\Drupal\user\UserInterface $account, arr
   // Visit portal CTA.
   $html .= '<tr><td style="background-color:#EEF7F4;padding:24px 40px;border-left:1px solid #e5e7e6;border-right:1px solid #e5e7e6;text-align:center;">';
   $html .= '<p style="margin:0 0 12px;font-family:system-ui,-apple-system,sans-serif;font-size:13px;color:#4A7C6F;">Once your password is set, your portal is at:</p>';
-  $html .= '<a href="' . $portal_url . '" style="font-family:system-ui,-apple-system,sans-serif;font-size:14px;font-weight:500;color:#1a2820;text-decoration:none;">' . $portal_url . '</a>';
+  $html .= '<span style="font-family:system-ui,-apple-system,sans-serif;font-size:14px;font-weight:500;color:#1a2820;">' . $portal_url . '</span>';
   $html .= '</td></tr>';
 
   // Footer.

@@ -331,20 +331,41 @@ class MemberPortalController extends ControllerBase {
       $ids = $query->execute();
 
       $events = [];
+$utc     = new \DateTimeZone('UTC');
+      $site_tz = new \DateTimeZone(date_default_timezone_get());
       foreach ($storage->loadMultiple($ids) as $node) {
-        $date    = $this->fieldValue($node, 'field_event_date');
-        $end     = $this->fieldValue($node, 'field_event_end_date');
-        $all_day = (bool) $this->fieldValue($node, 'field_all_day', FALSE);
-
+        $date_field = $node->hasField('field_event_date') && !$node->get('field_event_date')->isEmpty()
+          ? $node->get('field_event_date')->first()
+          : NULL;
+        $raw_start = $date_field ? $date_field->value : '';
+        $raw_end   = $date_field ? $date_field->end_value : NULL;
+        $all_day   = FALSE;
+        if ($raw_start && $raw_end) {
+          $dt_start = new \DateTime($raw_start, $utc);
+          $dt_end   = new \DateTime($raw_end, $utc);
+          $diff     = $dt_end->getTimestamp() - $dt_start->getTimestamp();
+          $all_day  = ($diff === 86399 || $diff === 86400);
+        }
+        $start_local = '';
+        $end_local   = '';
+        if ($raw_start) {
+          $dt = new \DateTime($raw_start, $utc);
+          $dt->setTimezone($site_tz);
+          $start_local = $all_day ? substr($raw_start, 0, 10) : $dt->format('Y-m-d\TH:i:s');
+        }
+        if ($raw_end) {
+          $dt = new \DateTime($raw_end, $utc);
+          $dt->setTimezone($site_tz);
+          $end_local = $all_day ? substr($raw_end, 0, 10) : $dt->format('Y-m-d\TH:i:s');
+        }
         $event = [
           'id'     => (string) $node->id(),
           'title'  => $node->getTitle(),
-          'start'  => $all_day ? substr($date, 0, 10) : $date,
+          'start'  => $start_local,
           'allDay' => $all_day,
         ];
-
-        if ($end) {
-          $event['end'] = $all_day ? substr($end, 0, 10) : $end;
+        if ($end_local) {
+          $event['end'] = $end_local;
         }
 
         if ($node->hasField('field_event_link') && !$node->get('field_event_link')->isEmpty()) {
