@@ -146,6 +146,9 @@ function mlp_members_user_login($account): void {
 function mlp_members_node_insert(\Drupal\node\NodeInterface $node): void {
   // Send newsletter BEFORE redirect — redirect calls exit() which would abort sending.
   mlp_members_node_insert_newsletter($node);
+  // Notify history managers of new pending submissions.
+  mlp_members_history_document_notify($node);
+  mlp_members_new_listing_alert($node);
   mlp_members_node_redirect($node);
 }
 
@@ -155,6 +158,7 @@ function mlp_members_node_insert(\Drupal\node\NodeInterface $node): void {
 function mlp_members_node_update(\Drupal\node\NodeInterface $node): void {
   // Send newsletter BEFORE redirect.
   mlp_members_node_insert_newsletter($node);
+  mlp_members_new_listing_alert($node);
   mlp_members_node_redirect($node);
 }
 
@@ -817,4 +821,183 @@ function mlp_members_simplenews_block_validate(array &$form, \Drupal\Core\Form\F
   if (is_string($mail)) {
     $form_state->setValue(['mail', 0, 'value'], $mail);
   }
+}
+
+/**
+ * Implements hook_node_insert().
+ * Notify history managers when a new history document submission arrives.
+ */
+function mlp_members_history_document_notify(\Drupal\node\NodeInterface $node): void {
+  if ($node->bundle() !== 'history_document' || $node->isPublished()) {
+    return;
+  }
+
+  // Load all users with the history_manager role.
+  $ids = \Drupal::entityTypeManager()->getStorage('user')->getQuery()
+    ->condition('roles', 'history_manager')
+    ->condition('status', 1)
+    ->accessCheck(FALSE)
+    ->execute();
+
+  if (empty($ids)) {
+    return;
+  }
+
+  $managers = \Drupal::entityTypeManager()->getStorage('user')->loadMultiple($ids);
+  $submitter = $node->getOwner()->getDisplayName();
+  $title = $node->getTitle();
+  $site_name = \Drupal::config('system.site')->get('name');
+  $admin_url = \Drupal::request()->getSchemeAndHttpHost() . '/admin/content?type=history_document&status=2';
+
+  foreach ($managers as $manager) {
+    $params = [
+      'subject' => t('New history document submission: @title', ['@title' => $title]),
+      'body'    => t("A new historical document has been submitted for review.\n\nTitle: @title\nSubmitted by: @submitter\n\nReview pending submissions at:\n@url", [
+        '@title'     => $title,
+        '@submitter' => $submitter,
+        '@url'       => $admin_url,
+      ]),
+    ];
+    \Drupal::service('plugin.manager.mail')->mail(
+      'mlp_members',
+      'history_document_notify',
+      $manager->getEmail(),
+      $manager->getPreferredLangcode(),
+      $params
+    );
+  }
+}
+
+/**
+ * Implements hook_mail().
+ * Defines the history document notification email.
+ */
+function mlp_members_mail(string $key, array &$message, array $params): void {
+  if ($key === 'history_document_notify') {
+    $message['subject'] = $params['subject'];
+    $message['body'][]  = $params['body'];
+  }
+}
+
+/**
+ * Sends new listing alert newsletter when a home_sale node is published.
+ */
+function mlp_members_new_listing_alert(\Drupal\node\NodeInterface $node): void {
+  if ($node->bundle() !== 'home_sale' || !$node->isPublished()) {
+    return;
+  }
+
+  // Only send on new publish — not on every update.
+  $is_new = $node->isNew();
+  $was_unpublished = !$node->isNew() && isset($node->original) && !$node->original->isPublished();
+  if (!$is_new && !$was_unpublished) {
+    return;
+  }
+
+  if (!\Drupal::moduleHandler()->moduleExists('simplenews')) {
+    return;
+  }
+
+  $newsletter = \Drupal::entityTypeManager()
+    ->getStorage('simplenews_newsletter')
+    ->load('new_listing_alert');
+
+  if (!$newsletter) {
+    return;
+  }
+
+  $url       = \Drupal::request()->getSchemeAndHttpHost() . '/node/' . $node->id();
+  $site_name = \Drupal::config('system.site')->get('name');
+  $base_url  = \Drupal::request()->getSchemeAndHttpHost();
+  $title     = $node->getTitle();
+  $address   = $node->hasField('field_listing_address') && !$node->get('field_listing_address')->isEmpty()
+    ? $node->get('field_listing_address')->value : '';
+  $price     = $node->hasField('field_home_price') && !$node->get('field_home_price')->isEmpty()
+    ? '$' . number_format($node->get('field_home_price')->value, 0, '.', ',') : '';
+  $bedrooms  = $node->hasField('field_listing_bedrooms') && !$node->get('field_listing_bedrooms')->isEmpty()
+    ? $node->get('field_listing_bedrooms')->value : '';
+  $bathrooms = $node->hasField('field_listing_bathrooms') && !$node->get('field_listing_bathrooms')->isEmpty()
+    ? $node->get('field_listing_bathrooms')->value : '';
+  $sqft      = $node->hasField('field_listing_sqft') && !$node->get('field_listing_sqft')->isEmpty()
+    ? number_format($node->get('field_listing_sqft')->value) : '';
+
+  // Get first image if available.
+  $image_html = '';
+  if ($node->hasField('field_listing_images') && !$node->get('field_listing_images')->isEmpty()) {
+    $image = $node->get('field_listing_images')->first()->entity;
+    if ($image) {
+      $image_url = \Drupal::service('file_url_generator')->generateAbsoluteString($image->getFileUri());
+      $image_html = '<tr><td style="padding:0;"><img src="' . $image_url . '" alt="' . htmlspecialchars($title) . '" style="width:100%;max-height:300px;object-fit:cover;display:block;"></td></tr>';
+    }
+  }
+
+  // Build branded HTML email.
+  $html  = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' . htmlspecialchars($title) . '</title></head>';
+  $html .= '<body style="margin:0;padding:0;background-color:#F5F4EF;font-family:Georgia,serif;">';
+  $html .= '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#F5F4EF;"><tr><td align="center" style="padding:40px 16px;">';
+  $html .= '<table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width:600px;width:100%;">';
+  // Header
+  $html .= '<tr><td style="border-radius:12px 12px 0 0;overflow:hidden;padding:0;background-color:#1a2820;background-image:url(\'' . $base_url . '/themes/custom/meadow_lane/images/hero-aerial.jpg\');background-size:cover;background-position:center;">';
+  $html .= '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"><tr><td style="padding:48px 40px;text-align:center;background-color:rgba(26,40,32,0.62);">';
+  $html .= '<h1 style="margin:0;font-family:Georgia,serif;font-size:26px;font-weight:400;color:#ffffff;letter-spacing:0.04em;">' . htmlspecialchars($site_name) . '</h1>';
+  $html .= '<p style="margin:8px 0 0;font-family:system-ui,-apple-system,sans-serif;font-size:12px;color:rgba(255,255,255,0.65);letter-spacing:0.06em;text-transform:uppercase;">New Listing Alert</p>';
+  $html .= '</td></tr></table></td></tr>';
+  // Photo
+  if ($image_html) {
+    $html .= $image_html;
+  }
+  // Body
+  $html .= '<tr><td style="background-color:#ffffff;padding:40px 40px 32px;border-left:1px solid #e5e7e6;border-right:1px solid #e5e7e6;">';
+  $html .= '<p style="margin:0 0 20px;font-family:system-ui,-apple-system,sans-serif;font-size:14px;color:#6E9E92;font-style:italic;">Check out this newly listed home for sale:</p>';
+  $html .= '<h2 style="margin:0 0 8px;font-family:Georgia,serif;font-size:24px;font-weight:400;color:#1a2820;line-height:1.3;">' . htmlspecialchars($title) . '</h2>';
+  if ($address) {
+    $html .= '<p style="margin:0 0 20px;font-family:system-ui,-apple-system,sans-serif;font-size:14px;color:#6b7c75;">' . htmlspecialchars($address) . '</p>';
+  }
+  // Specs
+  $specs = [];
+  if ($bedrooms) $specs[] = $bedrooms . ' Bedrooms';
+  if ($bathrooms) $specs[] = $bathrooms . ' Bathrooms';
+  if ($sqft) $specs[] = $sqft . ' sq ft';
+  if ($specs) {
+    $html .= '<p style="margin:0 0 16px;font-family:system-ui,-apple-system,sans-serif;font-size:14px;color:#374640;">' . implode(' &middot; ', $specs) . '</p>';
+  }
+  if ($price) {
+    $html .= '<p style="margin:0 0 32px;font-family:Georgia,serif;font-size:28px;color:#1a2820;font-weight:400;">' . $price . '</p>';
+  }
+  // CTA
+  $html .= '<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin-bottom:32px;"><tr><td style="border-radius:8px;background-color:#4A7C6F;">';
+  $html .= '<a href="' . $url . '" style="display:inline-block;padding:14px 32px;font-family:system-ui,-apple-system,sans-serif;font-size:14px;font-weight:500;color:#ffffff;text-decoration:none;border-radius:8px;">View Listing &rarr;</a>';
+  $html .= '</td></tr></table>';
+  $html .= '</td></tr>';
+  // Footer
+  $html .= '<tr><td style="background-color:#F5F4EF;border:1px solid #e5e7e6;border-top:none;border-radius:0 0 12px 12px;padding:24px 40px;text-align:center;">';
+  $html .= '<p style="margin:0 0 8px;font-family:system-ui,-apple-system,sans-serif;font-size:12px;color:#8a9a92;">' . htmlspecialchars($site_name) . ' &middot; Alexandria Bay, NY</p>';
+  $html .= '<p style="margin:0;font-family:system-ui,-apple-system,sans-serif;font-size:11px;color:#aab8b2;">You are receiving this because you subscribed to new listing alerts.<br>To unsubscribe, <a href="[simplenews-subscriber:unsubscribe-url]" style="color:#4A7C6F;">manage your preferences</a>.</p>';
+  $html .= '</td></tr></table></td></tr></table></body></html>';
+
+  // Store HTML for hook_mail_alter.
+  \Drupal::state()->set('mlp_pending_html', $html);
+
+  // Create and send the simplenews issue.
+  $issue = \Drupal::entityTypeManager()->getStorage('node')->create([
+    'type'             => 'simplenews_issue',
+    'title'            => $title,
+    'simplenews_issue' => [
+      'target_id' => $newsletter->id(),
+    ],
+    'body' => [
+      'value'  => $html,
+      'format' => 'full_html',
+    ],
+    'status' => 1,
+    'uid'    => 1,
+  ]);
+  $issue->save();
+
+  \Drupal::service('simplenews.spool_storage')->addIssue($issue);
+  \Drupal::service('simplenews.mailer')->sendSpool();
+  \Drupal::service('simplenews.spool_storage')->clear();
+  \Drupal::state()->delete('mlp_pending_html');
+
+  \Drupal::logger('mlp_members')->notice('New listing alert sent for: @title', ['@title' => $title]);
 }

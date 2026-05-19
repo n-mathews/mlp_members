@@ -87,13 +87,3 @@ mlp_members.history_submit:
   requirements:
     _user_is_logged_in: 'TRUE'
 
-
-
-mlp_members.history_approve:
-  path: '/history/{node}/approve'
-  defaults:
-    _controller: '\Drupal\mlp_members\Controller\MemberPortalController::historyApprove'
-    _title: 'Approve Document'
-  requirements:
-    _permission: 'edit any history_document content'
-    node: \d+

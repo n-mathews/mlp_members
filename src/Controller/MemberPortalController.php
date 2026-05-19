@@ -628,23 +628,4 @@ $utc     = new \DateTimeZone('UTC');
       '#cache'  => ['max-age' => 0],
     ];
   }
-
-
-
-  /**
-   * Approves (publishes) a history document submission.
-   */
-  public function historyApprove($node): \Symfony\Component\HttpFoundation\RedirectResponse {
-    $storage = $this->entityTypeManager()->getStorage('node');
-    $entity  = $storage->load($node);
-
-    if ($entity && $entity->bundle() === 'history_document' && !$entity->isPublished()) {
-      $entity->setPublished();
-      $entity->save();
-      \Drupal::messenger()->addStatus(t('"@title" has been approved and published.', ['@title' => $entity->getTitle()]));
-    }
-
-    return new \Symfony\Component\HttpFoundation\RedirectResponse('/history');
-  }
-
 }
