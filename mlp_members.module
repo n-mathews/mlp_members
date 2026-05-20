@@ -679,6 +679,41 @@ function mlp_members_toolbar(): array {
     ];
   }
 
+  // History manager — pending submissions badge.
+  if ($account->hasRole('history_manager')) {
+    $pending_count = \Drupal::entityTypeManager()->getStorage('node')->getQuery()
+      ->condition('type', 'history_document')
+      ->condition('status', 0)
+      ->accessCheck(FALSE)
+      ->count()
+      ->execute();
+
+    $badge = $pending_count > 0
+      ? ' <span class="mlp-pending-badge">' . $pending_count . '</span>'
+      : '';
+
+    $items['mlp_history_pending'] = [
+      '#type'   => 'toolbar_item',
+      '#weight' => 998,
+      'tab'     => [
+        '#type'       => 'link',
+        '#title'      => \Drupal\Core\Render\Markup::create(t('Submissions') . $badge),
+        '#url'        => \Drupal\Core\Url::fromUri('internal:/admin/content', [
+          'query' => ['title' => '', 'type' => 'history_document', 'status' => '2'],
+        ]),
+        '#attributes' => [
+          'title' => t('Review pending history document submissions'),
+          'class' => ['toolbar-icon', 'toolbar-icon-system-admin-content'],
+        ],
+      ],
+      '#wrapper_attributes' => ['class' => ['mlp-history-pending-toolbar-item']],
+      '#cache' => [
+        'contexts' => ['user.roles'],
+        'tags'     => ['node_list:history_document'],
+        'max-age'  => 300,
+      ],
+    ];
+  }
   return $items;
 }
 
